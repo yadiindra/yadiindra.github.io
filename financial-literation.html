@@ -1,500 +1,517 @@
-import React, { useState } from 'react';
-
-// Main App component
-const App = () => {
-  const [currentPage, setCurrentPage] = useState('pendahuluan');
-  const [selectedMinuteRange, setSelectedMinuteRange] = useState('0:00–1:00');
-  const [showGeminiSection, setShowGeminiSection] = useState(false); // State for Gemini section visibility
-  const [geminiQuestion, setGeminiQuestion] = useState(''); // State for user's question
-  const [geminiResponse, setGeminiResponse] = useState(''); // State for LLM response
-  const [isLoadingGemini, setIsLoadingGemini] = useState(false); // State for loading indicator
-
-  // Speaker identification
-  const speakers = {
-    'Pembicara 1': 'Pembawa acara/host (Timothy Ronald)',
-    'Partisipan Telepon': 'Pemirsa yang menelepon',
-  };
-
-  // Content for each minute range
-  const minuteContent = {
-    '0:00–1:00': (
-      <ul className="list-disc list-inside space-y-2 text-gray-700">
-        <li>[<span className="font-semibold">Pembicara 1</span>] Memperkenalkan segmen baru yang berfokus pada keuangan, menekankan bahwa individu terkaya sering berkecimpung di dunia finansial.</li>
-        <li>[<span className="font-semibold">Pembicara 1</span>] Menyampaikan filosofi acara untuk tidak memberikan nasihat keuangan jika pembicara sendiri masih kesulitan secara finansial.</li>
-      </ul>
-    ),
-    '1:00–2:00': (
-      <ul className="list-disc list-inside space-y-2 text-gray-700">
-        <li>[<span className="font-semibold">Pembicara 1</span>] Mengungkap data survei OJK 2022 yang menunjukkan 51% warga Indonesia kurang memiliki literasi keuangan.</li>
-        <li>[<span className="font-semibold">Pembicara 1</span>] Menyoroti kesenjangan antara keinginan untuk kaya dengan pemahaman dasar tentang cara mengelola uang secara efektif.</li>
-      </ul>
-    ),
-    '3:00–4:00': (
-      <ul className="list-disc list-inside space-y-2 text-gray-700">
-        <li>[<span className="font-semibold">Pembicara 1</span>] Memulai segmen interaktif melalui telepon dengan pemirsa untuk memberikan panduan praktis berdasarkan skenario nyata.</li>
-      </ul>
-    ),
-    '7:00–8:00': (
-      <ul className="list-disc list-inside space-y-2 text-gray-700">
-        <li>[<span className="font-semibold">Partisipan Telepon</span>] Berbagi pengalaman finansialnya: penghasilan Rp 20 juta per bulan, biaya hidup Rp 5 juta di Jepang, dan investasi Rp 15 juta.</li>
-        <li>[<span className="font-semibold">Partisipan Telepon</span>] Menyebutkan bahwa 90% dari gaji pertamanya diinvestasikan dalam Bitcoin.</li>
-      </ul>
-    ),
-    '9:00–10:00': (
-      <ul className="list-disc list-inside space-y-2 text-gray-700">
-        <li>[<span className="font-semibold">Pembicara 1</span>] Memperkenalkan konsep "Tangga Ternak Uang" sebagai langkah pertama dalam pengelolaan keuangan yang sistematis.</li>
-        <li>[<span className="font-semibold">Pembicara 1</span>] Menekankan langkah pertama: <strong className="font-semibold">membangun dana darurat</strong> minimal Rp 10 juta sebelum membantu orang lain seperti orang tua.</li>
-      </ul>
-    ),
-    '10:00–11:00': (
-      <ul className="list-disc list-inside space-y-2 text-gray-700">
-        <li>[<span className="font-semibold">Pembicara 1</span>] Menjelaskan langkah kedua "Tangga Ternak Uang": <strong className="font-semibold">membersihkan kewajiban atau hutang</strong> yang ada, kecuali cicilan kartu kredit atau KPR yang terkendali.</li>
-      </ul>
-    ),
-    '11:00–12:00': (
-      <ul className="list-disc list-inside space-y-2 text-gray-700">
-        <li>[<span className="font-semibold">Pembicara 1</span>] Memberikan saran alokasi dana untuk partisipan: Rp 10 juta untuk orang tua di bulan pertama, lalu menabung Rp 15 juta per bulan selama empat bulan berikutnya hingga mencapai Rp 70 juta.</li>
-      </ul>
-    ),
-    '12:00–13:00': (
-      <ul className="list-disc list-inside space-y-2 text-gray-700">
-        <li>[<span className="font-semibold">Pembicara 1</span>] Menyampaikan langkah keempat: <strong className="font-semibold">berinvestasi dengan bijak</strong> minimal 20% dari pendapatan setelah dana darurat terpenuhi.</li>
-        <li>[<span className="font-semibold">Pembicara 1</span>] Sangat merekomendasikan untuk melikuidasi investasi yang sangat volatil seperti Bitcoin saat awal, dan fokus pada investasi defensif untuk menghindari kesulitan keuangan.</li>
-      </ul>
-    ),
-    '104:00–105:00': (
-      <ul className="list-disc list-inside space-y-2 text-gray-700">
-        <li>[<span className="font-semibold">Pembicara 1</span>] Memberikan <strong className="font-semibold">peringatan keras terhadap skema "robot trading"</strong>, menyebutnya sebagai penipuan.</li>
-        <li>[<span className="font-semibold">Pembicara 1</span>] Menjelaskan bahwa sistem yang sah untuk mengalahkan pasar tidak perlu meminjam uang dari individu atau investor kecil.</li>
-      </ul>
-    ),
-    '105:00–106:00': (
-      <ul className="list-disc list-inside space-y-2 text-gray-700">
-        <li>[<span className="font-semibold">Pembicara 1</span>] Memperkenalkan platform yang akan datang: <strong className="font-semibold">"Akademi Crypto"</strong> yang berfokus pada strategi "alpha" untuk trader profesional.</li>
-        <li>[<span className="font-semibold">Pembicara 1</span>] Memperkenalkan <strong className="font-semibold">"Ternak Uang"</strong> yang akan mengajarkan strategi "beta," seperti investasi pasif dalam indeks dan membangun portofolio seimbang tanpa biaya manajemen yang tinggi.</li>
-      </ul>
-    ),
-    '107:00–108:00': (
-      <ul className="list-disc list-inside space-y-2 text-gray-700">
-        <li>[<span className="font-semibold">Pembicara 1</span>] Menginformasikan bahwa platform "Ternak Uang" diperkirakan akan diluncurkan dalam 10 hingga 12 hari ke depan.</li>
-      </ul>
-    ),
-  };
-
-  // Summary content
-  const summaryContent = {
-    pendahuluan: (
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-gray-800">Pendahuluan Singkat</h2>
-        <p className="text-gray-700">Video dari Timothy Ronald Show ini mengulas secara mendalam topik <strong className="text-blue-600">literasi keuangan dan manajemen kekayaan</strong>. Pembahasan mencakup pentingnya pemahaman finansial dasar, kesalahan umum dalam berinvestasi, dan langkah-langkah praktis untuk mencapai kebebasan finansial melalui berbagai perspektif.</p>
-      </div>
-    ),
-    rangkumanPerMenit: (
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-gray-800">Rangkuman Per-Menit</h2>
-        <div className="mb-4">
-          <label htmlFor="minute-select" className="block text-sm font-medium text-gray-700 mb-2">Pilih Rentang Menit:</label>
-          <select
-            id="minute-select"
-            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-            value={selectedMinuteRange}
-            onChange={(e) => setSelectedMinuteRange(e.target.value)}
-          >
-            <option value="0:00–1:00">Menit 0:00–1:00</option>
-            <option value="1:00–2:00">Menit 1:00–2:00</option>
-            <option value="3:00–4:00">Menit 3:00–4:00</option>
-            <option value="7:00–8:00">Menit 7:00–8:00</option>
-            <option value="9:00–10:00">Menit 9:00–10:00</option>
-            <option value="10:00–11:00">Menit 10:00–11:00</option>
-            <option value="11:00–12:00">Menit 11:00–12:00</option>
-            <option value="12:00–13:00">Menit 12:00–13:00</option>
-            <option value="104:00–105:00">Menit 104:00–105:00</option>
-            <option value="105:00–106:00">Menit 105:00–106:00</option>
-            <option value="107:00–108:00">Menit 107:00–108:00</option>
-          </select>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          {minuteContent[selectedMinuteRange]}
-        </div>
-      </div>
-    ),
-    pembahasanUtama: (
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-gray-800">Pembahasan Utama</h2>
-        <ol className="list-decimal list-inside space-y-4 text-gray-700">
-          <li>
-            <strong className="text-lg text-blue-600">Rendahnya Literasi Keuangan di Indonesia</strong>
-            <p className="mt-1">
-              <span className="font-semibold">Definisi/Konsep:</span> Literasi keuangan adalah kemampuan seseorang dalam mengelola dan memahami uang secara efektif.
-            </p>
-            <p className="mt-1">
-              <span className="font-semibold">Pendapat/Argumen:</span> [<span className="font-semibold">Pembicara 1</span>] Menyoroti data OJK 2022 bahwa lebih dari separuh warga Indonesia (51%) masih memiliki literasi keuangan yang rendah. Ini menunjukkan banyak orang tidak tahu cara mengelola uang mereka, meskipun memiliki keinginan untuk menjadi kaya.
-            </p>
-          </li>
-          <li>
-            <strong className="text-lg text-blue-600">Konsep "Tangga Ternak Uang"</strong>
-            <p className="mt-1">
-              <span className="font-semibold">Definisi/Konsep:</span> Sebuah kerangka kerja langkah demi langkah untuk pengelolaan keuangan pribadi yang sistematis dan bertanggung jawab.
-            </p>
-            <p className="mt-1">
-              <span className="font-semibold">Pendapat/Argumen:</span> [<span className="font-semibold">Pembicara 1</span>] Mengusulkan empat langkah utama:
-              <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
-                <li><strong className="font-semibold">Bangun Dana Darurat:</strong> Prioritas utama adalah memiliki dana darurat minimal Rp 10 juta. [<span className="font-semibold">Pembicara 1</span>] menekankan ini harus dilakukan sebelum membantu orang lain.</li>
-                <li><strong className="font-semibold">Bersihkan Kewajiban:</strong> Pastikan tidak ada hutang atau kewajiban finansial yang memberatkan, kecuali yang dapat dikelola seperti cicilan rumah atau kartu kredit yang terencana.</li>
-                <li><strong className="font-semibold">Alokasikan Dana:</strong> [<span className="font-semibold">Pembicara 1</span>] menyarankan alokasi dana secara strategis, misalnya untuk membantu orang tua sambil tetap menabung agresif untuk tujuan investasi.</li>
-                <li><strong className="font-semibold">Investasi dengan Bijak:</strong> Setelah tiga langkah pertama terpenuhi, investasikan setidaknya 20% dari pendapatan. [<span className="font-semibold">Pembicara 1</span>] menyarankan untuk berinvestasi pada aset yang lebih stabil dan melikuidasi aset yang sangat fluktuatif di awal.</li>
-              </ul>
-            </p>
-          </li>
-          <li>
-            <strong className="text-lg text-blue-600">Peringatan Terhadap Investasi Berisiko Tinggi/Penipuan</strong>
-            <p className="mt-1">
-              <span className="font-semibold">Definisi/Konsep:</span> Penipuan investasi, khususnya skema "robot trading" yang menjanjikan keuntungan tidak realistis.
-            </p>
-            <p className="mt-1">
-              <span className="font-semibold">Pendapat/Argumen:</span> [<span className="font-semibold">Pembicara 1</span>] Memberikan peringatan keras terhadap "robot trading," menyebutnya sebagai penipuan. [<span className="font-semibold">Pembicara 1</span>] berargumen bahwa sistem investasi yang benar-benar bisa mengalahkan pasar tidak akan perlu mencari modal dari investor kecil.
-            </p>
-          </li>
-        </ol>
-      </div>
-    ),
-    seleksiSintesis: (
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-gray-800">Seleksi dan Sintesis</h2>
-        <p className="text-gray-700">Secara keseluruhan, video ini secara konsisten menekankan pentingnya <strong className="text-blue-600">literasi keuangan</strong> sebagai fondasi kekayaan, bukan sekadar mencari uang banyak. Baik melalui penjelasan konsep atau studi kasus, [<span className="font-semibold">Pembicara 1</span>] berulang kali mengaitkan antara pemahaman finansial yang buruk dengan kerentanan terhadap masalah keuangan atau penipuan. Ada persamaan mendasar bahwa kekayaan harus dibangun di atas <strong className="text-blue-600">prinsip keuangan yang sehat</strong> (dana darurat, tanpa hutang, investasi terencana), bukan jalan pintas.</p>
-      </div>
-    ),
-    frameworkPraktis: (
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-gray-800">Framework atau Langkah Praktis</h2>
-        <h3 className="text-xl font-semibold text-gray-700">Framework "Tangga Ternak Uang" oleh [<span className="font-semibold">Pembicara 1</span>]:</h3>
-        <ol className="list-decimal list-inside space-y-3 text-gray-700">
-          <li>
-            <strong className="font-semibold">Bangun Dana Darurat:</strong> Poin ini sangat ditekankan oleh [<span className="font-semibold">Pembicara 1</span>] sebagai fondasi utama sebelum melakukan hal lain, termasuk membantu keluarga. Contoh: Rp 10 juta harus terkumpul di bulan berikutnya.
-          </li>
-          <li>
-            <strong className="font-semibold">Bersihkan Kewajiban:</strong> Pastikan tidak ada hutang. [<span className="font-semibold">Pembicara 1</span>] menyatakan ini krusial untuk kestabilan finansial.
-          </li>
-          <li>
-            <strong className="font-semibold">Alokasikan Dana:</strong> Setelah aman secara finansial, alokasikan dana secara strategis. [<span className="font-semibold">Pembicara 1</span>] mencontohkan membantu orang tua sambil tetap menabung besar.
-          </li>
-          <li>
-            <strong className="font-semibold">Investasi dengan Bijak:</strong> Investasikan setidaknya 20% dari pendapatan. [<span className="font-semibold">Pembicara 1</span>] menekankan pentingnya investasi defensif dan hati-hati terhadap aset volatil di awal.
-          </li>
-        </ol>
-      </div>
-    ),
-    studiKasus: (
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-gray-800">Studi Kasus atau Ilustrasi</h2>
-        <div className="bg-white p-6 rounded-lg shadow-md space-y-3">
-          <p className="font-semibold text-lg text-blue-600">A. Kasus Partisipan Telepon:</p>
-          <ul className="list-disc list-inside space-y-2 text-gray-700">
-            <li>[<span className="font-semibold">Partisipan Telepon</span>]: Seorang pemirsa dengan penghasilan Rp 20 juta/bulan, biaya hidup Rp 5 juta di Jepang, dan menginvestasikan Rp 15 juta. Kekhawatirannya adalah sebagian besar investasi awal dilakukan pada Bitcoin (90% dari gaji pertama).</li>
-            <li>[<span className="font-semibold">Pembicara 1</span>]: Mengingatkan tentang risiko investasi pada aset sangat volatil seperti Bitcoin, terutama di tahap awal. [<span className="font-semibold">Pembicara 1</span>] merekomendasikan untuk melikuidasi investasi berisiko tinggi tersebut dan fokus pada pembangunan dana darurat serta investasi yang lebih stabil sesuai "Tangga Ternak Uang".</li>
-            <li><strong className="font-semibold">Rekomendasi Gabungan:</strong> Fokus pada fondasi keuangan yang kuat (dana darurat, tanpa hutang) sebelum mengambil risiko investasi tinggi, dan diversifikasi portofolio.</li>
-          </ul>
-        </div>
-      </div>
-    ),
-    penutup: (
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-gray-800">Penutup & Refleksi</h2>
-        <p className="text-gray-700">Video ini secara komprehensif menguraikan pentingnya literasi keuangan dan langkah-langkah praktis menuju kemandirian finansial. [<span className="font-semibold">Pembicara 1</span>] memberikan kontribusi unik melalui konsep "Tangga Ternak Uang" yang lugas dan peringatan keras terhadap penipuan investasi. Harapannya, pemirsa dapat menerapkan prinsip-prinsip ini untuk membangun kekayaan yang berkelanjutan dan terhindar dari jebakan finansial.</p>
-      </div>
-    ),
-  };
-
-  // Helper function to extract text from a React node for LLM context
-  const getTextFromReactNode = (node) => {
-    if (typeof node === 'string') {
-      return node;
-    }
-    if (Array.isArray(node)) {
-      return node.map(getTextFromReactNode).join('');
-    }
-    if (React.isValidElement(node) && node.props && node.props.children) {
-      return getTextFromReactNode(node.props.children);
-    }
-    return '';
-  };
-
-  // Function to compile the full summary text for the LLM
-  const compileFullSummary = () => {
-    let fullText = "Berikut adalah rangkuman lengkap video Timothy Ronald Show tentang literasi keuangan dan manajemen kekayaan:\n\n";
-
-    fullText += "Identifikasi Narasumber:\n";
-    Object.entries(speakers).forEach(([label, description]) => {
-      fullText += `- ${label}: ${description}\n`;
-    });
-    fullText += "\n";
-
-    fullText += "Pendahuluan Singkat:\n";
-    fullText += getTextFromReactNode(summaryContent.pendahuluan) + "\n\n";
-
-    fullText += "Rangkuman Per-Menit:\n";
-    for (const range in minuteContent) {
-      fullText += `Menit ${range}:\n`;
-      fullText += getTextFromReactNode(minuteContent[range]) + "\n";
-    }
-    fullText += "\n";
-
-    fullText += "Pembahasan Utama:\n";
-    // Extract text from the main body of Pembahasan Utama
-    fullText += getTextFromReactNode(summaryContent.pembahasanUtama) + "\n\n";
-
-
-    fullText += "Seleksi dan Sintesis:\n";
-    fullText += getTextFromReactNode(summaryContent.seleksiSintesis) + "\n\n";
-
-    fullText += "Framework atau Langkah Praktis:\n";
-    fullText += getTextFromReactNode(summaryContent.frameworkPraktis) + "\n\n";
-
-    fullText += "Studi Kasus atau Ilustrasi:\n";
-    fullText += getTextFromReactNode(summaryContent.studiKasus) + "\n\n";
-
-    fullText += "Penutup & Refleksi:\n";
-    fullText += getTextFromReactNode(summaryContent.penutup) + "\n\n";
-
-    return fullText;
-  };
-
-  // Function to call Gemini API
-  const askGemini = async () => {
-    if (!geminiQuestion.trim()) {
-      setGeminiResponse("Mohon masukkan pertanyaan Anda.");
-      return;
-    }
-
-    setIsLoadingGemini(true);
-    setGeminiResponse(''); // Clear previous response
-
-    const fullSummaryText = compileFullSummary();
-    const prompt = `Berdasarkan rangkuman video berikut, jawablah pertanyaan ini dalam Bahasa Indonesia. Jika informasi tidak ada dalam rangkuman, nyatakan bahwa informasi tersebut tidak tersedia. \n\nPertanyaan: "${geminiQuestion}"\n\nRangkuman Video:\n${fullSummaryText}`;
-
-    try {
-      let chatHistory = [];
-      chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-      const payload = { contents: chatHistory };
-      const apiKey = ""; // Canvas will automatically provide this in runtime
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const result = await response.json();
-      if (result.candidates && result.candidates.length > 0 &&
-          result.candidates[0].content && result.candidates[0].content.parts &&
-          result.candidates[0].content.parts.length > 0) {
-        const text = result.candidates[0].content.parts[0].text;
-        setGeminiResponse(text);
-      } else {
-        setGeminiResponse("Maaf, tidak dapat menghasilkan respons. Silakan coba lagi.");
-      }
-    } catch (error) {
-      console.error("Error calling Gemini API:", error);
-      setGeminiResponse("Terjadi kesalahan saat memproses pertanyaan Anda. Silakan coba lagi.");
-    } finally {
-      setIsLoadingGemini(false);
-    }
-  };
-
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8 font-inter antialiased">
-      {/* Tailwind CSS import */}
-      <script src="https://cdn.tailwindcss.com"></script>
-      {/* Inter font from Google Fonts */}
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-
-      <style>{`
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rangkuman Video Interaktif</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <style>
         body {
-          font-family: 'Inter', sans-serif;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
         }
         .loading-spinner {
-          border: 4px solid #f3f3f3; /* Light grey */
-          border-top: 4px solid #3498db; /* Blue */
-          border-radius: 50%;
-          width: 24px;
-          height: 24px;
-          animation: spin 1s linear infinite;
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
         }
-
         @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-      `}</style>
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8 font-inter antialiased">
+    <div id="root"></div>
 
-      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
-        {/* Header Section */}
-        <div className="bg-blue-600 p-6 sm:p-8 text-white text-center rounded-t-xl">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-2">Rangkuman Video Keuangan Interaktif</h1>
-          <p className="text-blue-100 text-lg">Timothy Ronald Show: Literasi Keuangan & Manajemen Kekayaan</p>
-        </div>
+    <!-- React and ReactDOM CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel Standalone for JSX transformation in browser -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-        {/* Navigation Tabs */}
-        <nav className="bg-gray-100 p-4 border-b border-gray-200">
-          <ul className="flex flex-wrap justify-center gap-2 sm:gap-4">
-            <li>
-              <button
-                onClick={() => setCurrentPage('pendahuluan')}
-                className={`py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 ${
-                  currentPage === 'pendahuluan' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Pendahuluan
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => setCurrentPage('rangkumanPerMenit')}
-                className={`py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 ${
-                  currentPage === 'rangkumanPerMenit' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Rangkuman Per-Menit
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => setCurrentPage('pembahasanUtama')}
-                className={`py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 ${
-                  currentPage === 'pembahasanUtama' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Pembahasan Utama
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => setCurrentPage('seleksiSintesis')}
-                className={`py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 ${
-                  currentPage === 'seleksiSintesis' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Seleksi & Sintesis
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => setCurrentPage('frameworkPraktis')}
-                className={`py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 ${
-                  currentPage === 'frameworkPraktis' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Framework Praktis
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => setCurrentPage('studiKasus')}
-                className={`py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 ${
-                  currentPage === 'studiKasus' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Studi Kasus
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => setCurrentPage('penutup')}
-                className={`py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 ${
-                  currentPage === 'penutup' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Penutup & Refleksi
-              </button>
-            </li>
-          </ul>
-        </nav>
+    <script type="text/babel">
+        // Komponen React Anda dimulai di sini
+        const App = () => {
+          const [currentPage, setCurrentPage] = React.useState('pendahuluan');
+          const [selectedMinuteRange, setSelectedMinuteRange] = React.useState('0:00–1:00');
+          const [showGeminiSection, setShowGeminiSection] = React.useState(false);
+          const [geminiQuestion, setGeminiQuestion] = React.useState('');
+          const [geminiResponse, setGeminiResponse] = React.useState('');
+          const [isLoadingGemini, setIsLoadingGemini] = React.useState(false);
 
-        {/* Speaker Identification Section */}
-        <div className="p-6 sm:p-8 bg-gray-50 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-800 mb-3">Identifikasi Narasumber</h2>
-          <ul className="list-disc list-inside text-gray-700 space-y-1">
-            {Object.entries(speakers).map(([label, description]) => (
-              <li key={label}>
-                <strong className="font-semibold">{label}:</strong> {description}
-              </li>
-            ))}
-          </ul>
-        </div>
+          // Speaker identification
+          const speakers = {
+            'Pembicara 1': 'Pembawa acara/host (Timothy Ronald)',
+            'Partisipan Telepon': 'Pemirsa yang menelepon',
+          };
 
-        {/* Main Content Area */}
-        <div className="p-6 sm:p-8 bg-white">
-          {currentPage === 'pendahuluan' && summaryContent.pendahuluan}
-          {currentPage === 'rangkumanPerMenit' && summaryContent.rangkumanPerMenit}
-          {currentPage === 'pembahasanUtama' && summaryContent.pembahasanUtama}
-          {currentPage === 'seleksiSintesis' && summaryContent.seleksiSintesis}
-          {currentPage === 'frameworkPraktis' && summaryContent.frameworkPraktis}
-          {currentPage === 'studiKasus' && summaryContent.studiKasus}
-          {currentPage === 'penutup' && summaryContent.penutup}
+          // Content for each minute range (Pastikan ini adalah objek JavaScript yang valid, diawali dan diakhiri dengan {})
+          const minuteContent = {
+            '0:00–1:00': (
+              <ul className="list-disc list-inside space-y-2 text-gray-700">
+                <li>[<span className="font-semibold">Pembicara 1</span>] Memperkenalkan segmen baru yang berfokus pada keuangan, menekankan bahwa individu terkaya sering berkecimpung di dunia finansial.</li>
+                <li>[<span className="font-semibold">Pembicara 1</span>] Menyampaikan filosofi acara untuk tidak memberikan nasihat keuangan jika pembicara sendiri masih kesulitan secara finansial.</li>
+              </ul>
+            ),
+            '1:00–2:00': (
+              <ul className="list-disc list-inside space-y-2 text-gray-700">
+                <li>[<span className="font-semibold">Pembicara 1</span>] Mengungkap data survei OJK 2022 yang menunjukkan 51% warga Indonesia kurang memiliki literasi keuangan.</li>
+                <li>[<span className="font-semibold">Pembicara 1</span>] Menyoroti kesenjangan antara keinginan untuk kaya dengan pemahaman dasar tentang cara mengelola uang secara efektif.</li>
+              </ul>
+            ),
+            '3:00–4:00': (
+              <ul className="list-disc list-inside space-y-2 text-gray-700">
+                <li>[<span className="font-semibold">Pembicara 1</span>] Memulai segmen interaktif melalui telepon dengan pemirsa untuk memberikan panduan praktis berdasarkan skenario nyata.</li>
+              </ul>
+            ),
+            '7:00–8:00': (
+              <ul className="list-disc list-inside space-y-2 text-gray-700">
+                <li>[<span className="font-semibold">Partisipan Telepon</span>] Berbagi pengalaman finansialnya: penghasilan Rp 20 juta per bulan, biaya hidup Rp 5 juta di Jepang, dan investasi Rp 15 juta.</li>
+                <li>[<span className="font-semibold">Partisipan Telepon</span>] Menyebutkan bahwa 90% dari gaji pertamanya diinvestasikan dalam Bitcoin.</li>
+              </ul>
+            ),
+            '9:00–10:00': (
+              <ul className="list-disc list-inside space-y-2 text-gray-700">
+                <li>[<span className="font-semibold">Pembicara 1</span>] Memperkenalkan konsep "Tangga Ternak Uang" sebagai langkah pertama dalam pengelolaan keuangan yang sistematis.</li>
+                <li>[<span className="font-semibold">Pembicara 1</span>] Menekankan langkah pertama: <strong className="font-semibold">membangun dana darurat</strong> minimal Rp 10 juta sebelum membantu orang lain seperti orang tua.</li>
+              </ul>
+            ),
+            '10:00–11:00': (
+              <ul className="list-disc list-inside space-y-2 text-gray-700">
+                <li>[<span className="font-semibold">Pembicara 1</span>] Menjelaskan langkah kedua "Tangga Ternak Uang": <strong className="font-semibold">membersihkan kewajiban atau hutang</strong> yang ada, kecuali cicilan kartu kredit atau KPR yang terkendali.</li>
+              </ul>
+            ),
+            '11:00–12:00': (
+              <ul className="list-disc list-inside space-y-2 text-gray-700">
+                <li>[<span className="font-semibold">Pembicara 1</span>] Memberikan saran alokasi dana untuk partisipan: Rp 10 juta untuk orang tua di bulan pertama, lalu menabung Rp 15 juta per bulan selama empat bulan berikutnya hingga mencapai Rp 70 juta.</li>
+              </ul>
+            ),
+            '12:00–13:00': (
+              <ul className="list-disc list-inside space-y-2 text-gray-700">
+                <li>[<span className="font-semibold">Pembicara 1</span>] Menyampaikan langkah keempat: <strong className="font-semibold">berinvestasi dengan bijak</strong> minimal 20% dari pendapatan setelah dana darurat terpenuhi.</li>
+                <li>[<span className="font-semibold">Pembicara 1</span>] Sangat merekomendasikan untuk melikuidasi investasi yang sangat volatil seperti Bitcoin saat awal, dan fokus pada investasi defensif untuk menghindari kesulitan keuangan.</li>
+              </ul>
+            ),
+            '104:00–105:00': (
+              <ul className="list-disc list-inside space-y-2 text-gray-700">
+                <li>[<span className="font-semibold">Pembicara 1</span>] Memberikan <strong className="font-semibold">peringatan keras terhadap skema "robot trading"</strong>, menyebutnya sebagai penipuan.</li>
+                <li>[<span className="font-semibold">Pembicara 1</span>] Menjelaskan bahwa sistem yang sah untuk mengalahkan pasar tidak perlu meminjam uang dari individu atau investor kecil.</li>
+              </ul>
+            ),
+            '105:00–106:00': (
+              <ul className="list-disc list-inside space-y-2 text-gray-700">
+                <li>[<span className="font-semibold">Pembicara 1</span>] Memperkenalkan platform yang akan datang: <strong className="font-semibold">"Akademi Crypto"</strong> yang berfokus pada strategi "alpha" untuk trader profesional.</li>
+                <li>[<span className="font-semibold">Pembicara 1</span>] Memperkenalkan <strong className="font-semibold">"Ternak Uang"</strong> yang akan mengajarkan strategi "beta," seperti investasi pasif dalam indeks dan membangun portofolio seimbang tanpa biaya manajemen yang tinggi.</li>
+              </ul>
+            ),
+            '107:00–108:00': (
+              <ul className="list-disc list-inside space-y-2 text-gray-700">
+                <li>[<span className="font-semibold">Pembicara 1</span>] Menginformasikan bahwa platform "Ternak Uang" diperkirakan akan diluncurkan dalam 10 hingga 12 hari ke depan.</li>
+              </ul>
+            ),
+          };
 
-          {/* Gemini API Integration Section */}
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <button
-              onClick={() => setShowGeminiSection(!showGeminiSection)}
-              className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-all duration-300 flex items-center justify-center space-x-2"
-            >
-              <span>Tanyakan Gemini ✨</span>
-              <svg className="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.17-.953L2 18l1.333-3.111A7.962 7.962 0 012 10c0-3.866 3.582-7 8-7s8 3.134 8 7z" clipRule="evenodd" />
-              </svg>
-            </button>
-
-            {showGeminiSection && (
-              <div className="mt-6 p-6 bg-gray-100 rounded-lg shadow-inner space-y-4">
-                <h3 className="text-xl font-bold text-gray-800">Ajukan Pertanyaan ke Gemini</h3>
-                <textarea
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 resize-y"
-                  rows="3"
-                  placeholder="Ketik pertanyaan Anda tentang rangkuman video di sini..."
-                  value={geminiQuestion}
-                  onChange={(e) => setGeminiQuestion(e.target.value)}
-                ></textarea>
-                <button
-                  onClick={askGemini}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow transition-all duration-200 flex items-center justify-center space-x-2"
-                  disabled={isLoadingGemini}
-                >
-                  {isLoadingGemini ? (
-                    <div className="loading-spinner"></div>
-                  ) : (
-                    <>
-                      <span>Jawab ✨</span>
-                      <svg className="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l4.472-1.242a1 1 0 00.62-.924V10.5a1 1 0 011-1h.5a1 1 0 011 1v4.225a1 1 0 00.62.924l4.472 1.242a1 1 0 001.169-1.409l-7-14z" />
-                      </svg>
-                    </>
-                  )}
-                </button>
-                {geminiResponse && (
-                  <div className="mt-4 p-4 bg-white border border-gray-300 rounded-md shadow-sm">
-                    <p className="font-semibold text-gray-800 mb-2">Jawaban dari Gemini:</p>
-                    <p className="text-gray-700 whitespace-pre-wrap">{geminiResponse}</p>
-                  </div>
-                )}
-                <button
-                  onClick={() => {
-                    setShowGeminiSection(false);
-                    setGeminiQuestion('');
-                    setGeminiResponse('');
-                  }}
-                  className="mt-4 text-sm text-gray-600 hover:text-gray-900"
-                >
-                  Tutup
-                </button>
+          // Summary content
+          const summaryContent = {
+            pendahuluan: (
+              <div className="space-y-4">
+                <h2 className="text-2xl font-bold text-gray-800">Pendahuluan Singkat</h2>
+                <p className="text-gray-700">Video dari Timothy Ronald Show ini mengulas secara mendalam topik <strong className="text-blue-600">literasi keuangan dan manajemen kekayaan</strong>. Pembahasan mencakup pentingnya pemahaman finansial dasar, kesalahan umum dalam berinvestasi, dan langkah-langkah praktis untuk mencapai kebebasan finansial melalui berbagai perspektif.</p>
               </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+            ),
+            rangkumanPerMenit: (
+              <div className="space-y-4">
+                <h2 className="text-2xl font-bold text-gray-800">Rangkuman Per-Menit</h2>
+                <div className="mb-4">
+                  <label htmlFor="minute-select" className="block text-sm font-medium text-gray-700 mb-2">Pilih Rentang Menit:</label>
+                  <select
+                    id="minute-select"
+                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                    value={selectedMinuteRange}
+                    onChange={(e) => setSelectedMinuteRange(e.target.value)}
+                  >
+                    <option value="0:00–1:00">Menit 0:00–1:00</option>
+                    <option value="1:00–2:00">Menit 1:00–2:00</option>
+                    <option value="3:00–4:00">Menit 3:00–4:00</option>
+                    <option value="7:00–8:00">Menit 7:00–8:00</option>
+                    <option value="9:00–10:00">Menit 9:00–10:00</option>
+                    <option value="10:00–11:00">Menit 10:00–11:00</option>
+                    <option value="11:00–12:00">Menit 11:00–12:00</option>
+                    <option value="12:00–13:00">Menit 12:00–13:00</option>
+                    <option value="104:00–105:00">Menit 104:00–105:00</option>
+                    <option value="105:00–106:00">Menit 105:00–106:00</option>
+                    <option value="107:00–108:00">Menit 107:00–108:00</option>
+                  </select>
+                </div>
+                <div className="bg-white p-6 rounded-lg shadow-md">
+                  {minuteContent[selectedMinuteRange]}
+                </div>
+              </div>
+            ),
+            pembahasanUtama: (
+              <div className="space-y-4">
+                <h2 className="text-2xl font-bold text-gray-800">Pembahasan Utama</h2>
+                <ol className="list-decimal list-inside space-y-4 text-gray-700">
+                  <li>
+                    <strong className="text-lg text-blue-600">Rendahnya Literasi Keuangan di Indonesia</strong>
+                    <p className="mt-1">
+                      <span className="font-semibold">Definisi/Konsep:</span> Literasi keuangan adalah kemampuan seseorang dalam mengelola dan memahami uang secara efektif.
+                    </p>
+                    <p className="mt-1">
+                      <span className="font-semibold">Pendapat/Argumen:</span> [<span className="font-semibold">Pembicara 1</span>] Menyoroti data OJK 2022 bahwa lebih dari separuh warga Indonesia (51%) masih memiliki literasi keuangan yang rendah. Ini menunjukkan banyak orang tidak tahu cara mengelola uang mereka, meskipun memiliki keinginan untuk menjadi kaya.
+                    </p>
+                  </li>
+                  <li>
+                    <strong className="text-lg text-blue-600">Konsep "Tangga Ternak Uang"</strong>
+                    <p className="mt-1">
+                      <span className="font-semibold">Definisi/Konsep:</span> Sebuah kerangka kerja langkah demi langkah untuk pengelolaan keuangan pribadi yang sistematis dan bertanggung jawab.
+                    </p>
+                    <p className="mt-1">
+                      <span className="font-semibold">Pendapat/Argumen:</span> [<span className="font-semibold">Pembicara 1</span>] Mengusulkan empat langkah utama:
+                      <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
+                        <li><strong className="font-semibold">Bangun Dana Darurat:</strong> Prioritas utama adalah memiliki dana darurat minimal Rp 10 juta. [<span className="font-semibold">Pembicara 1</span>] menekankan ini harus dilakukan sebelum membantu orang lain.</li>
+                        <li><strong className="font-semibold">Bersihkan Kewajiban:</strong> Pastikan tidak ada hutang atau kewajiban finansial yang memberatkan, kecuali yang dapat dikelola seperti cicilan rumah atau kartu kredit yang terencana.</li>
+                        <li><strong className="font-semibold">Alokasikan Dana:</strong> [<span className="font-semibold">Pembicara 1</span>] menyarankan alokasi dana secara strategis, misalnya untuk membantu orang tua sambil tetap menabung agresif untuk tujuan investasi.</li>
+                        <li><strong className="font-semibold">Investasi dengan Bijak:</strong> Setelah tiga langkah pertama terpenuhi, investasikan setidaknya 20% dari pendapatan. [<span className="font-semibold">Pembicara 1</span>] menyarankan untuk berinvestasi pada aset yang lebih stabil dan melikuidasi aset yang sangat fluktuatif di awal.</li>
+                      </ul>
+                    </p>
+                  </li>
+                  <li>
+                    <strong className="text-lg text-blue-600">Peringatan Terhadap Investasi Berisiko Tinggi/Penipuan</strong>
+                    <p className="mt-1">
+                      <span className="font-semibold">Definisi/Konsep:</span> Penipuan investasi, khususnya skema "robot trading" yang menjanjikan keuntungan tidak realistis.
+                    </p>
+                    <p className="mt-1">
+                      <span className="font-semibold">Pendapat/Argumen:</span> [<span className="font-semibold">Pembicara 1</span>] Memberikan peringatan keras terhadap "robot trading," menyebutnya sebagai penipuan. [<span className="font-semibold">Pembicara 1</span>] berargumen bahwa sistem investasi yang benar-benar bisa mengalahkan pasar tidak akan perlu mencari modal dari investor kecil.
+                    </p>
+                  </li>
+                </ol>
+              </div>
+            ),
+            seleksiSintesis: (
+              <div className="space-y-4">
+                <h2 className="text-2xl font-bold text-gray-800">Seleksi dan Sintesis</h2>
+                <p className="text-gray-700">Secara keseluruhan, video ini secara konsisten menekankan pentingnya <strong className="text-blue-600">literasi keuangan</strong> sebagai fondasi kekayaan, bukan sekadar mencari uang banyak. Baik melalui penjelasan konsep atau studi kasus, [<span className="font-semibold">Pembicara 1</span>] berulang kali mengaitkan antara pemahaman finansial yang buruk dengan kerentanan terhadap masalah keuangan atau penipuan. Ada persamaan mendasar bahwa kekayaan harus dibangun di atas <strong className="text-blue-600">prinsip keuangan yang sehat</strong> (dana darurat, tanpa hutang, investasi terencana), bukan jalan pintas.</p>
+              </div>
+            ),
+            frameworkPraktis: (
+              <div className="space-y-4">
+                <h2 className="text-2xl font-bold text-gray-800">Framework atau Langkah Praktis</h2>
+                <h3 className="text-xl font-semibold text-gray-700">Framework "Tangga Ternak Uang" oleh [<span className="font-semibold">Pembicara 1</span>]:</h3>
+                <ol className="list-decimal list-inside space-y-3 text-gray-700">
+                  <li>
+                    <strong className="font-semibold">Bangun Dana Darurat:</strong> Poin ini sangat ditekankan oleh [<span className="font-semibold">Pembicara 1</span>] sebagai fondasi utama sebelum melakukan hal lain, termasuk membantu keluarga. Contoh: Rp 10 juta harus terkumpul di bulan berikutnya.
+                  </li>
+                  <li>
+                    <strong className="font-semibold">Bersihkan Kewajiban:</strong> Pastikan tidak ada hutang. [<span className="font-semibold">Pembicara 1</span>] menyatakan ini krusial untuk kestabilan finansial.
+                  </li>
+                  <li>
+                    <strong className="font-semibold">Alokasikan Dana:</strong> Setelah aman secara finansial, alokasikan dana secara strategis. [<span className="font-semibold">Pembicara 1</span>] mencontohkan membantu orang tua sambil tetap menabung besar.
+                  </li>
+                  <li>
+                    <strong className="font-semibold">Investasi dengan Bijak:</strong> Investasikan setidaknya 20% dari pendapatan. [<span className="font-semibold">Pembicara 1</span>] menekankan pentingnya investasi defensif dan hati-hati terhadap aset volatil di awal.</li>
+                </ol>
+              </div>
+            ),
+            studiKasus: (
+              <div className="space-y-4">
+                <h2 className="text-2xl font-bold text-gray-800">Studi Kasus atau Ilustrasi</h2>
+                <div className="bg-white p-6 rounded-lg shadow-md space-y-3">
+                  <p className="font-semibold text-lg text-blue-600">A. Kasus Partisipan Telepon:</p>
+                  <ul className="list-disc list-inside space-y-2 text-gray-700">
+                    <li>[<span className="font-semibold">Partisipan Telepon</span>]: Seorang pemirsa dengan penghasilan Rp 20 juta/bulan, biaya hidup Rp 5 juta di Jepang, dan menginvestasikan Rp 15 juta. Kekhawatirannya adalah sebagian besar investasi awal dilakukan pada Bitcoin (90% dari gaji pertama).</li>
+                    <li>[<span className="font-semibold">Pembicara 1</span>]: Mengingatkan tentang risiko investasi pada aset sangat volatil seperti Bitcoin, terutama di tahap awal. [<span className="font-semibold">Pembicara 1</span>] merekomendasikan untuk melikuidasi investasi berisiko tinggi tersebut dan fokus pada pembangunan dana darurat serta investasi yang lebih stabil sesuai "Tangga Ternak Uang".</li>
+                    <li><strong className="font-semibold">Rekomendasi Gabungan:</strong> Fokus pada fondasi keuangan yang kuat (dana darurat, tanpa hutang) sebelum mengambil risiko investasi tinggi, dan diversifikasi portofolio.</li>
+                  </ul>
+                </div>
+              </div>
+            ),
+            penutup: (
+              <div className="space-y-4">
+                <h2 className="text-2xl font-bold text-gray-800">Penutup & Refleksi</h2>
+                <p className="text-gray-700">Video ini secara komprehensif menguraikan pentingnya literasi keuangan dan langkah-langkah praktis menuju kemandirian finansial. [<span className="font-semibold">Pembicara 1</span>] memberikan kontribusi unik melalui konsep "Tangga Ternak Uang" yang lugas dan peringatan keras terhadap penipuan investasi. Harapannya, pemirsa dapat menerapkan prinsip-prinsip ini untuk membangun kekayaan yang berkelanjutan dan terhindar dari jebakan finansial.</p>
+              </div>
+            ),
+          };
 
-export default App;
+          // Helper function to extract text from a React node for LLM context
+          const getTextFromReactNode = (node) => {
+            if (typeof node === 'string') {
+              return node;
+            }
+            if (Array.isArray(node)) {
+              return node.map(getTextFromReactNode).join('');
+            }
+            if (React.isValidElement(node) && node.props && node.props.children) {
+              return getTextFromReactNode(node.props.children);
+            }
+            return '';
+          };
+
+          // Function to compile the full summary text for the LLM
+          const compileFullSummary = () => {
+            let fullText = "Berikut adalah rangkuman lengkap video Timothy Ronald Show tentang literasi keuangan dan manajemen kekayaan:\n\n";
+
+            fullText += "Identifikasi Narasumber:\n";
+            Object.entries(speakers).forEach(([label, description]) => {
+              fullText += `- ${label}: ${description}\n`;
+            });
+            fullText += "\n";
+
+            fullText += "Pendahuluan Singkat:\n";
+            fullText += getTextFromReactNode(summaryContent.pendahuluan) + "\n\n";
+
+            fullText += "Rangkuman Per-Menit:\n";
+            for (const range in minuteContent) {
+              fullText += `Menit ${range}:\n`;
+              fullText += getTextFromReactNode(minuteContent[range]) + "\n";
+            }
+            fullText += "\n";
+
+            fullText += "Pembahasan Utama:\n";
+            fullText += getTextFromReactNode(summaryContent.pembahasanUtama) + "\n\n";
+
+
+            fullText += "Seleksi dan Sintesis:\n";
+            fullText += getTextFromReactNode(summaryContent.seleksiSintesis) + "\n\n";
+
+            fullText += "Framework atau Langkah Praktis:\n";
+            fullText += getTextFromReactNode(summaryContent.frameworkPraktis) + "\n\n";
+
+            fullText += "Studi Kasus atau Ilustrasi:\n";
+            fullText += getTextFromReactNode(summaryContent.studiKasus) + "\n\n";
+
+            fullText += "Penutup & Refleksi:\n";
+            fullText += getTextFromReactNode(summaryContent.penutup) + "\n\n";
+
+            return fullText;
+          };
+
+          // Function to call Gemini API
+          const askGemini = async () => {
+            if (!geminiQuestion.trim()) {
+              setGeminiResponse("Mohon masukkan pertanyaan Anda.");
+              return;
+            }
+
+            setIsLoadingGemini(true);
+            setGeminiResponse(''); // Clear previous response
+
+            const fullSummaryText = compileFullSummary();
+            // Prompt yang lebih tegas agar Gemini hanya menjawab berdasarkan rangkuman
+            const prompt = `Anda adalah seorang asisten yang ahli dalam merangkum dan menjawab pertanyaan berdasarkan teks yang diberikan. Jawab pertanyaan berikut ini HANYA berdasarkan rangkuman video yang terlampir di bawah. Jika informasi tidak ada dalam rangkuman, nyatakan dengan jelas bahwa informasi tersebut tidak tersedia atau tidak disebutkan dalam rangkuman. Jangan menambahkan informasi dari sumber lain.
+\n\nPertanyaan: "${geminiQuestion}"\n\nRangkuman Video:\n${fullSummaryText}`;
+
+            try {
+              let chatHistory = [];
+              chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+              const payload = { contents: chatHistory };
+              // PENTING: Untuk hosting di luar Canvas, Anda perlu mengisi API_KEY Anda di sini.
+              // Contoh: const apiKey = "YOUR_GEMINI_API_KEY_HERE";
+              const apiKey = ""; // Jika di Canvas, ini akan otomatis diisi
+              const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+              const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+              });
+
+              const result = await response.json();
+              if (result.candidates && result.candidates.length > 0 &&
+                  result.candidates[0].content && result.candidates[0].content.parts &&
+                  result.candidates[0].content.parts.length > 0) {
+                const text = result.candidates[0].content.parts[0].text;
+                setGeminiResponse(text);
+              } else {
+                setGeminiResponse("Maaf, tidak dapat menghasilkan respons. Silakan coba lagi. (Kemungkinan: tidak ada kandidat respons atau respons kosong)");
+              }
+            } catch (error) {
+              console.error("Error calling Gemini API:", error);
+              setGeminiResponse("Terjadi kesalahan saat memproses pertanyaan Anda. Silakan coba lagi.");
+            } finally {
+              setIsLoadingGemini(false);
+            }
+          };
+
+
+          return (
+            <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
+              {/* Header Section */}
+              <div className="bg-blue-600 p-6 sm:p-8 text-white text-center rounded-t-xl">
+                <h1 className="text-3xl sm:text-4xl font-bold mb-2">Rangkuman Video Keuangan Interaktif</h1>
+                <p className="text-blue-100 text-lg">Timothy Ronald Show: Literasi Keuangan & Manajemen Kekayaan</p>
+              </div>
+
+              {/* Navigation Tabs */}
+              <nav className="bg-gray-100 p-4 border-b border-gray-200">
+                <ul className="flex flex-wrap justify-center gap-2 sm:gap-4">
+                  <li>
+                    <button
+                      onClick={() => setCurrentPage('pendahuluan')}
+                      className={`py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 ${
+                        currentPage === 'pendahuluan' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                      Pendahuluan
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => setCurrentPage('rangkumanPerMenit')}
+                      className={`py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 ${
+                        currentPage === 'rangkumanPerMenit' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                      Rangkuman Per-Menit
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => setCurrentPage('pembahasanUtama')}
+                      className={`py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 ${
+                        currentPage === 'pembahasanUtama' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                      Pembahasan Utama
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => setCurrentPage('seleksiSintesis')}
+                      className={`py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 ${
+                        currentPage === 'seleksiSintesis' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                      Seleksi & Sintesis
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => setCurrentPage('frameworkPraktis')}
+                      className={`py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 ${
+                        currentPage === 'frameworkPraktis' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                      Framework Praktis
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => setCurrentPage('studiKasus')}
+                      className={`py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 ${
+                        currentPage === 'studiKasus' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                      Studi Kasus
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => setCurrentPage('penutup')}
+                      className={`py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 ${
+                        currentPage === 'penutup' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                      Penutup & Refleksi
+                    </button>
+                  </li>
+                </ul>
+              </nav>
+
+              {/* Speaker Identification Section */}
+              <div className="p-6 sm:p-8 bg-gray-50 border-b border-gray-200">
+                <h2 className="text-xl font-bold text-gray-800 mb-3">Identifikasi Narasumber</h2>
+                <ul className="list-disc list-inside text-gray-700 space-y-1">
+                  {Object.entries(speakers).map(([label, description]) => (
+                    <li key={label}>
+                      <strong className="font-semibold">{label}:</strong> {description}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Main Content Area */}
+              <div className="p-6 sm:p-8 bg-white">
+                {currentPage === 'pendahuluan' && summaryContent.pendahuluan}
+                {currentPage === 'rangkumanPerMenit' && summaryContent.rangkumanPerMenit}
+                {currentPage === 'pembahasanUtama' && summaryContent.pembahasanUtama}
+                {currentPage === 'seleksiSintesis' && summaryContent.seleksiSintesis}
+                {currentPage === 'frameworkPraktis' && summaryContent.frameworkPraktis}
+                {currentPage === 'studiKasus' && summaryContent.studiKasus}
+                {currentPage === 'penutup' && summaryContent.penutup}
+
+                {/* Gemini API Integration Section */}
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                  <button
+                    onClick={() => setShowGeminiSection(!showGeminiSection)}
+                    className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-all duration-300 flex items-center justify-center space-x-2"
+                  >
+                    <span>Tanyakan Gemini ✨</span>
+                    <svg className="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.17-.953L2 18l1.333-3.111A7.962 7.962 0 012 10c0-3.866 3.582-7 8-7s8 3.134 8 7z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+
+                  {showGeminiSection && (
+                    <div className="mt-6 p-6 bg-gray-100 rounded-lg shadow-inner space-y-4">
+                      <h3 className="text-xl font-bold text-gray-800">Ajukan Pertanyaan ke Gemini</h3>
+                      <textarea
+                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 resize-y"
+                        rows="3"
+                        placeholder="Ketik pertanyaan Anda tentang rangkuman video di sini..."
+                        value={geminiQuestion}
+                        onChange={(e) => setGeminiQuestion(e.target.value)}
+                      ></textarea>
+                      <button
+                        onClick={askGemini}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow transition-all duration-200 flex items-center justify-center space-x-2"
+                        disabled={isLoadingGemini}
+                      >
+                        {isLoadingGemini ? (
+                          <div className="loading-spinner"></div>
+                        ) : (
+                          <>
+                            <span>Jawab ✨</span>
+                            <svg className="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l4.472-1.242a1 1 0 00.62-.924V10.5a1 1 0 011-1h.5a1 1 0 011 1v4.225a1 1 0 00.62.924l4.472 1.242a1 1 0 001.169-1.409l-7-14z" />
+                            </svg>
+                          </>
+                        )}
+                      </button>
+                      {geminiResponse && (
+                        <div className="mt-4 p-4 bg-white border border-gray-300 rounded-md shadow-sm">
+                          <p className="font-semibold text-gray-800 mb-2">Jawaban dari Gemini:</p>
+                          <p className="text-gray-700 whitespace-pre-wrap">{geminiResponse}</p>
+                        </div>
+                      )}
+                      <button
+                        onClick={() => {
+                          setShowGeminiSection(false);
+                          setGeminiQuestion('');
+                          setGeminiResponse('');
+                        }}
+                        className="mt-4 text-sm text-gray-600 hover:text-gray-900"
+                      >
+                        Tutup
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        };
+
+        // Render komponen App ke div dengan id 'root'
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
