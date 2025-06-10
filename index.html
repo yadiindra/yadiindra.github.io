@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dasbor Interaktif: Menavigasi Krisis 2030</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony Neutrals -->
+    <!-- Application Structure Plan: Struktur aplikasi ini dirancang sebagai sebuah narasi visual yang mengalir dari atas ke bawah. Dimulai dengan pengenalan masalah (Dua Krisis), dilanjutkan dengan visualisasi dampak dari waktu ke waktu (Garis Waktu Dampak), kemudian menyoroti konsekuensi bagi individu (Kesenjangan Besar), dan diakhiri dengan solusi konkret (Kerangka & Perangkat Aksi). Struktur ini dipilih untuk membimbing pengguna secara logis dari pemahaman masalah hingga pemberdayaan diri dengan solusi, membuatnya lebih mudah dicerna daripada sekadar menyajikan data secara terpisah. Interaksi seperti klik dan hover digunakan untuk memungkinkan pendalaman materi tanpa mengganggu alur utama. Integrasi Gemini API ditambahkan di bagian Krisis (untuk simulasi dampak AI) dan sebagai bagian baru (untuk Q&A langsung), memperkaya eksplorasi pengguna. -->
+    <!-- Visualization & Content Choices: 1. Krisis Finansial & Teknologi (Informasi): Menggunakan tata letak dua kolom dengan elemen yang dapat diklik untuk menampilkan detail. Ini memungkinkan perbandingan langsung antara dua pendorong krisis. 2. Garis Waktu Dampak (Perubahan): Chart.js digunakan untuk membuat grafik garis interaktif yang memvisualisasikan prediksi dari waktu ke waktu. Ini lebih menarik daripada daftar statis. 3. Kesenjangan Besar (Perbandingan): Metafora visual dengan dua kartu untuk membandingkan dua arketipe individu, diperkuat dengan efek hover untuk menyoroti perbedaan. 4. Kerangka Aksi (Organisasi): Menggunakan komponen akordeon agar pengguna dapat fokus pada satu langkah praktis pada satu waktu. Ini menjaga antarmuka tetap bersih dan terstruktur. 5. Simulasi Dampak AI (Interaktif, LLM): Menggunakan input teks dan tombol untuk memicu panggilan API Gemini, menampilkan respons yang dipersonalisasi tentang dampak AI pada pekerjaan. 6. Tanya Gemini (Interaktif, LLM): Menyediakan antarmuka Q&A langsung dengan LLM, memungkinkan pengguna bertanya lebih lanjut tentang laporan atau topik terkait. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F4F0;
+            color: #333333;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #D95F43;
+            border-bottom-color: #D95F43;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+        }
+        .accordion-button.open .accordion-arrow {
+            transform: rotate(180deg);
+        }
+        .accordion-arrow {
+            transition: transform 0.3s;
+        }
+        .highlight-accent { color: #D95F43; }
+        .bg-accent-primary { background-color: #4A908A; }
+        .bg-accent-secondary { background-color: #D95F43; }
+        .text-accent-primary { color: #4A908A; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-accent-primary">Krisis 2030</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#krisis" class="nav-link font-medium">Dua Krisis</a>
+                <a href="#dampak" class="nav-link font-medium">Garis Waktu</a>
+                <a href="#solusi" class="nav-link font-medium">Kerangka Aksi</a>
+                <a href="#tanya-gemini" class="nav-link font-medium">Tanya Gemini</a>
+            </div>
+            <a href="#toolkit" class="hidden md:inline-block bg-accent-secondary text-white font-bold py-2 px-4 rounded-lg hover:opacity-90 transition-opacity">Mulai Bersiap</a>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12 md:py-20">
+        
+        <section id="hero" class="text-center mb-20 md:mb-32">
+            <h2 class="text-4xl md:text-6xl font-extrabold mb-4">Proyeksi Krisis 2030</h2>
+            <p class="text-lg md:text-xl max-w-3xl mx-auto text-gray-600">Sebuah analisis interaktif tentang potensi krisis finansial dan revolusi teknologi yang akan datang, serta bagaimana kita dapat mempersiapkan diri menggunakan strategi berpikir terbalik.</p>
+        </section>
+
+        <section id="krisis" class="mb-20 md:mb-32">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl md:text-4xl font-bold">Dua Krisis yang Saling Terhubung</h3>
+                <p class="mt-4 max-w-2xl mx-auto text-gray-600">Laporan ini mengidentifikasi dua kekuatan besar yang mendorong perubahan fundamental: guncangan pada sistem keuangan global dan percepatan eksponensial kecerdasan buatan. Klik pada setiap poin untuk melihat detailnya.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8 md:gap-12">
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-200">
+                    <h4 class="text-2xl font-bold mb-6 text-accent-secondary flex items-center">
+                        <span class="mr-3">📉</span> Krisis Finansial: De-Dolarisasi
+                    </h4>
+                    <ul class="space-y-4">
+                        <li class="interactive-item p-3 rounded-lg hover:bg-gray-100 cursor-pointer" data-info="Utang nasional AS yang masif dan tidak berkelanjutan menekan nilai mata uangnya, memicu risiko hyperinflasi global.">Utang AS yang Tidak Berkelanjutan</li>
+                        <li class="interactive-item p-3 rounded-lg hover:bg-gray-100 cursor-pointer" data-info="Negara-negara seperti Rusia dan Tiongkok mulai mengurangi ketergantungan pada Dolar AS dan US Treasuries.">Pengurangan Investasi Asing</li>
+                        <li class="interactive-item p-3 rounded-lg hover:bg-gray-100 cursor-pointer" data-info="Negara penghasil minyak seperti Arab Saudi berpotensi beralih ke mata uang lain (misal: Yuan) untuk transaksi, mengguncang sistem petrodolar.">Peralihan Transaksi Minyak</li>
+                        <li class="interactive-item p-3 rounded-lg hover:bg-gray-100 cursor-pointer" data-info="Hegemoni Dolar AS yang dijamin oleh kekuatan militer kini terancam oleh teknologi pertahanan modern yang murah namun efektif seperti drone.">Pergeseran Kekuatan Militer</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-200">
+                    <h4 class="text-2xl font-bold mb-6 text-accent-primary flex items-center">
+                        <span class="mr-3">🤖</span> Revolusi Teknologi: Era AGI
+                    </h4>
+                     <ul class="space-y-4">
+                        <li class="interactive-item p-3 rounded-lg hover:bg-gray-100 cursor-pointer" data-info="Artificial General Intelligence (AGI) diprediksi muncul dalam 10-40 tahun, mampu berpikir dan belajar mandiri, tidak seperti AI saat ini yang hanya mengikuti perintah.">Kemunculan AGI</li>
+                        <li class="interactive-item p-3 rounded-lg hover:bg-gray-100 cursor-pointer" data-info="Dengan AGI, 99.9% pekerjaan manusia berpotensi digantikan. Diperkirakan 40% pekerjaan akan hilang pada tahun 2030 saja.">Penggantian Pekerjaan Massal</li>
+                        <li class="interactive-item p-3 rounded-lg hover:bg-gray-100 cursor-pointer" data-info="Kecerdasan buatan super diprediksi akan 1 juta kali lebih efisien daripada manusia, yang akan membuat harga barang dan jasa menjadi sangat murah.">Efisiensi Produksi Super</li>
+                        <li class="interactive-item p-3 rounded-lg hover:bg-gray-100 cursor-pointer" data-info="Akan ada kesenjangan intelektual yang besar antara mereka yang memanfaatkan AI dan mereka yang tidak, menciptakan 'Manusia Superior' baru.">Kesenjangan Intelektual</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="info-box" class="mt-8 p-6 bg-teal-50 border-l-4 border-teal-500 text-teal-800 rounded-lg transition-opacity duration-300 opacity-0 min-h-[50px]">
+                <p class="font-medium">Klik pada salah satu poin di atas untuk melihat penjelasannya di sini.</p>
+            </div>
+
+            <div class="mt-16 bg-white p-8 rounded-xl shadow-lg border border-gray-200">
+                <h4 class="text-2xl font-bold mb-6 text-accent-primary flex items-center">
+                    <span class="mr-3">✨</span> Simulasikan Dampak AI pada Pekerjaan Anda
+                </h4>
+                <p class="text-gray-600 mb-4">Ingin tahu bagaimana AGI mungkin memengaruhi profesi Anda? Masukkan bidang pekerjaan Anda di bawah ini dan biarkan Gemini memberikan perkiraan dampaknya berdasarkan konsep laporan.</p>
+                <input type="text" id="jobInput" placeholder="Contoh: Akuntan, Desainer Grafis, Sopir Truk" class="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-accent-primary">
+                <button id="simulateJobBtn" class="bg-accent-secondary text-white font-bold py-3 px-6 rounded-lg hover:opacity-90 transition-opacity w-full">
+                    Simulasikan Dampak AI ✨
+                </button>
+                <div id="jobImpactResult" class="mt-6 p-4 bg-gray-50 text-gray-800 rounded-lg border border-gray-200 min-h-[50px]">
+                    <p class="text-gray-500">Hasil simulasi akan muncul di sini...</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="dampak" class="mb-20 md:mb-32">
+             <div class="text-center mb-12">
+                <h3 class="text-3xl md:text-4xl font-bold">Garis Waktu Dampak</h3>
+                <p class="mt-4 max-w-2xl mx-auto text-gray-600">Visualisasi ini memetakan beberapa prediksi utama dari laporan dalam sebuah garis waktu. Arahkan kursor atau klik pada titik-titik di grafik untuk menjelajahi potensi peristiwa penting menuju dan setelah tahun 2030.</p>
+            </div>
+            <div class="bg-white p-4 sm:p-8 rounded-xl shadow-lg border border-gray-200">
+                <div class="chart-container">
+                    <canvas id="timelineChart"></canvas>
+                </div>
+                 <p id="chart-info" class="text-center mt-6 text-gray-700 font-medium min-h-[2rem]">Arahkan kursor ke titik di grafik untuk info.</p>
+            </div>
+        </section>
+
+        <section id="solusi" class="mb-20 md:mb-32">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl md:text-4xl font-bold">Kerangka Aksi: Strategi Inversi</h3>
+                <p class="mt-4 max-w-2xl mx-auto text-gray-600">Untuk menghadapi masa depan yang tidak pasti, laporan ini menyarankan sebuah kerangka kerja praktis yang berpusat pada strategi "inversi" atau berpikir terbalik. Daripada hanya merencanakan kesuksesan, kita harus secara aktif mengidentifikasi dan menghindari kegagalan.</p>
+            </div>
+            <div class="max-w-3xl mx-auto space-y-4">
+                <div class="accordion-item bg-white border border-gray-200 rounded-xl shadow-sm">
+                    <button class="accordion-button w-full text-left p-6 flex justify-between items-center">
+                        <span class="text-lg font-bold">1. Potong Semua "Noise"</span>
+                        <span class="accordion-arrow text-2xl font-bold text-accent-primary">↓</span>
+                    </button>
+                    <div class="accordion-content px-6">
+                        <p class="py-4 text-gray-700">Langkah pertama adalah secara sadar menyaring informasi. Virus paling berbahaya di era mendatang bukanlah fisik, melainkan propaganda dan manipulasi media. Berhenti mendengarkan sumber yang tidak kredibel dan fokus pada sinyal yang berkualitas.</p>
+                    </div>
+                </div>
+                <div class="accordion-item bg-white border border-gray-200 rounded-xl shadow-sm">
+                    <button class="accordion-button w-full text-left p-6 flex justify-between items-center">
+                        <span class="text-lg font-bold">2. Belajar Hal Baru Setiap Hari</span>
+                        <span class="accordion-arrow text-2xl font-bold text-accent-primary">↓</span>
+                    </button>
+                    <div class="accordion-content px-6">
+                        <p class="py-4 text-gray-700">Komitmen untuk belajar seumur hidup. Fokus pada pengetahuan fundamental yang benar, seperti Austrian Economics dan prinsip-prinsip pasar bebas. Asah keterampilan yang relevan dengan masa depan (AI, Kriptografi, Blockchain) untuk membangun keunggulan kompetitif.</p>
+                    </div>
+                </div>
+                <div class="accordion-item bg-white border border-gray-200 rounded-xl shadow-sm">
+                    <button class="accordion-button w-full text-left p-6 flex justify-between items-center">
+                        <span class="text-lg font-bold">3. Miliki Uang Sendiri</span>
+                        <span class="accordion-arrow text-2xl font-bold text-accent-primary">↓</span>
+                    </button>
+                    <div class="accordion-content px-6">
+                        <p class="py-4 text-gray-700">Dalam sistem di mana mata uang fiat rentan terhadap devaluasi, penting untuk memiliki aset yang berada di luar kendali sistem tersebut. Laporan merekomendasikan Bitcoin sebagai uang pribadi yang berdaulat, tidak dapat disita atau didevaluasi oleh otoritas pusat.</p>
+                    </div>
+                </div>
+                 <div class="accordion-item bg-white border border-gray-200 rounded-xl shadow-sm">
+                    <button class="accordion-button w-full text-left p-6 flex justify-between items-center">
+                        <span class="text-lg font-bold">4. Kendalikan Pikiran Anda</span>
+                        <span class="accordion-arrow text-2xl font-bold text-accent-primary">↓</span>
+                    </button>
+                    <div class="accordion-content px-6">
+                        <p class="py-4 text-gray-700">Satu-satunya hal yang benar-benar bisa kita kontrol adalah pikiran kita sendiri. Latih pikiran untuk tetap tenang, berpikir jernih, dan tidak mudah dimanipulasi oleh narasi eksternal. Mental yang kuat adalah aset terpenting.</p>
+                    </div>
+                </div>
+                 <div class="accordion-item bg-white border border-gray-200 rounded-xl shadow-sm">
+                    <button class="accordion-button w-full text-left p-6 flex justify-between items-center">
+                        <span class="text-lg font-bold">5. Ciptakan Nilai Besar</span>
+                        <span class="accordion-arrow text-2xl font-bold text-accent-primary">↓</span>
+                    </button>
+                    <div class="accordion-content px-6">
+                        <p class="py-4 text-gray-700">Daripada mengejar uang, kejar tujuan untuk menciptakan nilai yang signifikan bagi dunia. Dalam ekonomi masa depan, mereka yang mampu memberikan nilai terbesar—baik melalui inovasi, kepemimpinan, atau keahlian—akan mendapatkan imbalan terbesar.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="toolkit">
+             <div class="text-center mb-12">
+                <h3 class="text-3xl md:text-4xl font-bold">Perangkat Anda untuk Masa Depan</h3>
+                <p class="mt-4 max-w-2xl mx-auto text-gray-600">Untuk memulai perjalanan Anda, fokuslah pada pemahaman mendalam di area-area kunci berikut. Ini bukan hanya tentang investasi, tetapi tentang membangun literasi untuk menavigasi dunia baru.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-200 text-center">
+                    <div class="text-5xl mb-4">₿</div>
+                    <h4 class="text-xl font-bold mb-2">Bitcoin & Kriptografi</h4>
+                    <p class="text-gray-600">Pahami dasar-dasar uang yang terdesentralisasi, cara kerjanya, dan mengapa ia dianggap sebagai lindung nilai terhadap kegagalan sistem keuangan tradisional.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-200 text-center">
+                     <div class="text-5xl mb-4">💡</div>
+                    <h4 class="text-xl font-bold mb-2">Artificial Intelligence (AI)</h4>
+                    <p class="text-gray-600">Mulai gunakan alat AI dalam pekerjaan dan kehidupan sehari-hari. Pelajari cara kerjanya untuk meningkatkan produktivitas dan jangan sampai tertinggal.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-200 text-center">
+                     <div class="text-5xl mb-4">🏛️</div>
+                    <h4 class="text-xl font-bold mb-2">Ekonomi & Sejarah Uang</h4>
+                    <p class="text-gray-600">Pelajari prinsip-prinsip ekonomi (khususnya Austrian School) dan sejarah uang untuk memahami mengapa sistem saat ini rapuh dan apa yang mungkin terjadi selanjutnya.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="tanya-gemini" class="mb-20 md:mb-32">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl md:text-4xl font-bold">✨ Tanya Gemini tentang Krisis 2030</h3>
+                <p class="mt-4 max-w-2xl mx-auto text-gray-600">Miliki pertanyaan lebih lanjut tentang krisis 2030, de-dolarisasi, atau dampak AI? Ketik pertanyaan Anda di bawah ini, dan Gemini akan berusaha memberikan wawasan berdasarkan konteks laporan ini.</p>
+            </div>
+            <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-200 max-w-3xl mx-auto">
+                <textarea id="geminiQuestion" placeholder="Contoh: Bagaimana de-dolarisasi akan mempengaruhi kehidupan sehari-hari saya?" rows="5" class="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-accent-primary"></textarea>
+                <button id="askGeminiBtn" class="bg-accent-primary text-white font-bold py-3 px-6 rounded-lg hover:opacity-90 transition-opacity w-full">
+                    Tanya Gemini ✨
+                </button>
+                <div id="geminiAnswer" class="mt-6 p-4 bg-gray-50 text-gray-800 rounded-lg border border-gray-200 min-h-[50px]">
+                    <p class="text-gray-500">Jawaban Gemini akan muncul di sini...</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="bg-gray-800 text-white mt-20">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p>Aplikasi interaktif ini adalah interpretasi dari laporan video dan dirancang untuk tujuan edukasi.</p>
+            <p class="text-sm text-gray-400 mt-2">Dibuat dengan Tailwind CSS & Chart.js. Juni 2025.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+            const timelineData = {
+                labels: ['Sekarang', '2030', '2035', '2040'],
+                datasets: [{
+                    label: 'Tingkat Disrupsi',
+                    data: [10, 70, 90, 100],
+                    borderColor: '#D95F43',
+                    backgroundColor: 'rgba(217, 95, 67, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#D95F43',
+                    pointRadius: 6,
+                    pointHoverRadius: 10,
+                }]
+            };
+            const timelineInfo = {
+                'Sekarang': 'Tahap awal adopsi AI dan tekanan pada sistem keuangan global mulai terasa.',
+                '2030': 'Titik kritis krisis diprediksi terjadi. De-dolarisasi meningkat dan 40% pekerjaan digantikan AI.',
+                '2035': 'AGI kemungkinan mulai matang, menyebabkan percepatan disrupsi di hampir semua sektor.',
+                '2040': 'Menuju masyarakat di mana 99% pekerjaan manusia mungkin tidak lagi diperlukan, harga barang sangat murah.'
+            };
+            const chartInfoEl = document.getElementById('chart-info');
+            
+            const timelineChart = new Chart(timelineCtx, {
+                type: 'line',
+                data: timelineData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return timelineData.labels[context.dataIndex];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            display: false,
+                            max: 110,
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                            }
+                        }
+                    },
+                    onHover: (event, chartElement) => {
+                        if (chartElement.length > 0) {
+                            const index = chartElement[0].index;
+                            const label = timelineData.labels[index];
+                            chartInfoEl.textContent = timelineInfo[label];
+                        } else {
+                            chartInfoEl.textContent = 'Arahkan kursor ke titik di grafik untuk info.';
+                        }
+                    },
+                }
+            });
+
+            const interactiveItems = document.querySelectorAll('.interactive-item');
+            const infoBox = document.getElementById('info-box');
+            interactiveItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const infoText = item.getAttribute('data-info');
+                    infoBox.style.opacity = '0';
+                    setTimeout(() => {
+                        infoBox.querySelector('p').textContent = infoText;
+                        infoBox.style.opacity = '1';
+                    }, 200);
+                });
+            });
+
+            const accordionButtons = document.querySelectorAll('.accordion-button');
+            accordionButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const content = button.nextElementSibling;
+                    const isOpen = button.classList.contains('open');
+                    
+                    document.querySelectorAll('.accordion-button').forEach(b => b.classList.remove('open'));
+                    document.querySelectorAll('.accordion-content').forEach(c => c.style.maxHeight = '0');
+
+                    if (!isOpen) {
+                        button.classList.add('open');
+                        content.style.maxHeight = content.scrollHeight + "px";
+                    }
+                });
+            });
+
+            const navLinks = document.querySelectorAll('header .nav-link');
+            const sections = document.querySelectorAll('main section');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.3
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+            
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Gemini API Integration - AI Impact Simulator
+            const jobInput = document.getElementById('jobInput');
+            const simulateJobBtn = document.getElementById('simulateJobBtn');
+            const jobImpactResult = document.getElementById('jobImpactResult');
+
+            simulateJobBtn.addEventListener('click', async () => {
+                const jobRole = jobInput.value.trim();
+                if (!jobRole) {
+                    jobImpactResult.innerHTML = '<p class="text-red-600">Mohon masukkan profesi.</p>';
+                    return;
+                }
+
+                jobImpactResult.innerHTML = '<p class="text-gray-500">Memuat simulasi dampak AI...</p>';
+                simulateJobBtn.disabled = true;
+
+                try {
+                    const chatHistory = [];
+                    const prompt = `Sebagai seorang ${jobRole}, bagaimana Artificial General Intelligence (AGI) diprediksi akan memengaruhi pekerjaan ini pada tahun 2030 berdasarkan konsep penggantian pekerjaan massal dan efisiensi produksi super yang dibahas dalam laporan krisis 2030? Berikan penjelasan singkat, maksimal 3-4 kalimat.`;
+                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                    const payload = { contents: chatHistory };
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        jobImpactResult.innerHTML = `<p>${text}</p>`;
+                    } else {
+                        jobImpactResult.innerHTML = '<p class="text-red-600">Maaf, terjadi kesalahan saat menghasilkan respons. Silakan coba lagi.</p>';
+                    }
+                } catch (error) {
+                    console.error('Error simulating job impact:', error);
+                    jobImpactResult.innerHTML = '<p class="text-red-600">Maaf, terjadi masalah koneksi atau server. Silakan coba lagi nanti.</p>';
+                } finally {
+                    simulateJobBtn.disabled = false;
+                }
+            });
+
+            // Gemini API Integration - Ask Gemini
+            const geminiQuestionInput = document.getElementById('geminiQuestion');
+            const askGeminiBtn = document.getElementById('askGeminiBtn');
+            const geminiAnswerDiv = document.getElementById('geminiAnswer');
+
+            askGeminiBtn.addEventListener('click', async () => {
+                const question = geminiQuestionInput.value.trim();
+                if (!question) {
+                    geminiAnswerDiv.innerHTML = '<p class="text-red-600">Mohon masukkan pertanyaan Anda.</p>';
+                    return;
+                }
+
+                geminiAnswerDiv.innerHTML = '<p class="text-gray-500">Gemini sedang berpikir...</p>';
+                askGeminiBtn.disabled = true;
+
+                try {
+                    const chatHistory = [];
+                    const prompt = `Saya membaca laporan tentang proyeksi krisis 2030, de-dolarisasi, dan dampak Artificial General Intelligence (AGI). Berdasarkan konteks tersebut, jawab pertanyaan berikut: "${question}". Jelaskan secara ringkas dan informatif.`;
+                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                    const payload = { contents: chatHistory };
+                    const apiKey = "AIzaSyBKBmTKwgg0W1LdPm7Ihd6HOvJMuFDdQq0";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        geminiAnswerDiv.innerHTML = `<p>${text}</p>`;
+                    } else {
+                        geminiAnswerDiv.innerHTML = '<p class="text-red-600">Maaf, terjadi kesalahan saat menghasilkan respons. Silakan coba lagi.</p>';
+                    }
+                } catch (error) {
+                    console.error('Error asking Gemini:', error);
+                    geminiAnswerDiv.innerHTML = '<p class="text-red-600">Maaf, terjadi masalah koneksi atau server. Silakan coba lagi nanti.</p>';
+                } finally {
+                    askGeminiBtn.disabled = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
