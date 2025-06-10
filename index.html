@@ -394,7 +394,7 @@
                     const prompt = `Sebagai seorang ${jobRole}, bagaimana Artificial General Intelligence (AGI) diprediksi akan memengaruhi pekerjaan ini pada tahun 2030 berdasarkan konsep penggantian pekerjaan massal dan efisiensi produksi super yang dibahas dalam laporan krisis 2030? Berikan penjelasan singkat, maksimal 3-4 kalimat.`;
                     chatHistory.push({ role: "user", parts: [{ text: prompt }] });
                     const payload = { contents: chatHistory };
-                    const apiKey = "";
+                    const apiKey = "AIzaSyBKBmTKwgg0W1LdPm7Ihd6HOvJMuFDdQq0";
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
