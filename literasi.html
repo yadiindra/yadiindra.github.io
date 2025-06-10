@@ -314,7 +314,7 @@
               chatHistory.push({ role: "user", parts: [{ text: prompt }] });
               const payload = { contents: chatHistory };
               // PENTING: Untuk hosting di luar Canvas, Anda perlu mengisi API_KEY Anda di sini.
-              // Contoh: const apiKey = "YOUR_GEMINI_API_KEY_HERE";
+              // Contoh: const apiKey = "AIzaSyBKBmTKwgg0W1LdPm7Ihd6HOvJMuFDdQq0";
               const apiKey = ""; // Jika di Canvas, ini akan otomatis diisi
               const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
