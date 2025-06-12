@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pensiunan OB Punya Aset 120 Miliar dari Investasi Saham</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- AOS CSS CDN -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- React CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <!-- ReactDOM CDN -->
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel Standalone CDN for JSX transformation in browser -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        /* Custom Keyframes for Animations */
+        @keyframes fadeInFromBottom {
+          from { opacity: 0; transform: translateY(50px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes growHeight {
+          from { height: var(--initial-height); }
+          to { height: var(--final-height); }
+        }
+
+        @keyframes shrinkHeight {
+          from { height: var(--initial-height); }
+          to { height: var(--final-height); }
+        }
+
+        @keyframes scaleX {
+          from { transform: scaleX(0); }
+          to { transform: scaleX(1); }
+        }
+
+        @keyframes spinSlow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+
+        @keyframes growBounce {
+          0% { transform: scale(0); opacity: 0; }
+          50% { transform: scale(1.1); opacity: 1; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes fadeInFromRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeInFromLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Applying custom animations */
+        .animate-fade-in-up { animation: fadeInFromBottom 1s ease-out forwards; }
+        .animate-grow-height { animation: growHeight 1.5s ease-out forwards; }
+        .animate-shrink-height { animation: shrinkHeight 1.5s ease-out forwards; }
+        .animate-scale-x { animation: scaleX 0.8s ease-out forwards; }
+        .animate-spin-slow { animation: spinSlow 5s linear infinite; }
+        .animate-grow-bounce { animation: growBounce 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; }
+        .animate-fade-in-right { animation: fadeInFromRight 0.5s ease-out forwards; }
+        .animate-fade-in-left { animation: fadeInFromLeft 0.5s ease-out forwards; }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+
+        /* General styles for fonts and scroll behavior */
+        body { font-family: 'Inter', sans-serif; }
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 text-gray-800">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        const { createRoot } = ReactDOM;
+
+        // Inline SVG Icons (replacing Lucide React imports)
+        const Lightbulb = ({ size = 24, className = '', ...props }) => (
+          <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+            <path d="M15 14c.2-.8 1-1.5 2-2 2.3-2.3 3.3-4.4 2.6-6.1A2 2 0 0 0 17 4a2 2 0 0 0-3 3.72a12 12 0 0 1-.7 1.5c-.2.2-.5.4-.7.6l-1.4 1.4A6 6 0 0 1 6 18a6 6 0 0 0 4 2.32c.87.5 2 1.1 3.4 1.7L15 22h-3"/>
+            <path d="M9 18a6 6 0 0 1-4.75-2.73 8 8 0 0 1-1.25-6.42A2 2 0 0 0 2 8c0-1.5 1-3 3-3s3 1 3 3"/>
+            <path d="M7 21h8"/>
+          </svg>
+        );
+
+        const Scale = ({ size = 24, className = '', ...props }) => (
+          <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+            <path d="m16 16 3-3a1 1 0 0 0 0-1.42l-3-3a1 1 0 0 0-1.42 0L9 12 7.07 10.07a1 1 0 0 0-1.42 0l-3 3a1 1 0 0 0 0 1.42l3 3a1 1 0 0 0 1.42 0L12 12l1.93 1.93a1 1 0 0 0 1.42 0Z"/>
+            <path d="m21 15-3-3"/>
+            <path d="M3 9l3 3"/>
+            <path d="m14 14 3 3"/>
+            <path d="M10 10 7 7"/>
+            <circle cx="12" cy="12" r="2"/>
+          </svg>
+        );
+
+        const Target = ({ size = 24, className = '', ...props }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+                <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+            </svg>
+        );
+
+        const Brain = ({ size = 24, className = '', ...props }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+                <path d="M12 5c.67-2 7-2 7 5 0 2-2 5-7 5s-7-3-7-5c0-7 6.33-7 7-5Z"/><path d="M12 5c.67-2 7-2 7 5 0 2-2 5-7 5s-7-3-7-5c0-7 6.33-7 7-5Z" transform="rotate(180 12 12)"/><path d="M12 5c.67-2 7-2 7 5 0 2-2 5-7 5s-7-3-7-5c0-7 6.33-7 7-5Z" transform="rotate(90 12 12)"/><path d="M12 5c.67-2 7-2 7 5 0 2-2 5-7 5s-7-3-7-5c0-7 6.33-7 7-5Z" transform="rotate(-90 12 12)"/>
+            </svg>
+        );
+
+        const Heart = ({ size = 24, className = '', ...props }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5L12 22Z"/>
+            </svg>
+        );
+
+        const CheckCircle = ({ size = 24, className = '', ...props }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
+            </svg>
+        );
+
+        const XCircle = ({ size = 24, className = '', ...props }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+                <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>
+            </svg>
+        );
+
+
+        // Main App Component
+        function App() {
+          const [activeTab, setActiveTab] = useState('ronald');
+          const [quizScore, setQuizScore] = useState(0);
+          const [showQuizResult, setShowQuizResult] = useState(false);
+          const [selectedAnswers, setSelectedAnswers] = useState({});
+
+          const quizQuestions = [
+            {
+              question: "Apa kunci utama keberhasilan finansial Ronald Read?",
+              options: [
+                "Kecerdasan tinggi",
+                "Investasi jangka pendek",
+                "Perilaku menabung dan investasi konsisten",
+                "Warisan besar"
+              ],
+              correctAnswer: "Perilaku menabung dan investasi konsisten"
+            },
+            {
+              question: "Mengapa Richard Fuscone yang cerdas bisa bangkrut?",
+              options: [
+                "Tidak punya pekerjaan",
+                "Pengeluaran mewah dan utang berlebihan",
+                "Investasi yang buruk",
+                "Kurangnya pendidikan"
+              ],
+              correctAnswer: "Pengeluaran mewah dan utang berlebihan"
+            },
+            {
+              question: "Apa yang dimaksud dengan 'Psikologi Uang' dalam konteks video ini?",
+              options: [
+                "Cara mencari uang cepat",
+                "Pentingnya emosi dan bias kognitif dalam keputusan finansial",
+                "Matematika kompleks dalam investasi",
+                "Cara membuat anggaran pribadi"
+              ],
+              correctAnswer: "Pentingnya emosi dan bias kognitif dalam keputusan finansial"
+            }
+          ];
+
+          useEffect(() => {
+            // Inisialisasi AOS (Animate On Scroll) if it's globally available
+            if (typeof AOS !== 'undefined') {
+              AOS.init({
+                duration: 1000,
+                once: true, // Animasi hanya berjalan sekali saat elemen pertama kali terlihat
+              });
+            }
+          }, []);
+
+          // Fungsi untuk scroll halus ke bagian tertentu
+          const scrollToSection = (id) => {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+          };
+
+          // Fungsi untuk menangani perubahan jawaban quiz
+          const handleAnswerChange = (questionIndex, selectedOption) => {
+            setSelectedAnswers(prev => ({
+              ...prev,
+              [questionIndex]: selectedOption
+            }));
+          };
+
+          // Fungsi untuk submit quiz
+          const handleSubmitQuiz = () => {
+            let score = 0;
+            quizQuestions.forEach((q, index) => {
+              if (selectedAnswers[index] === q.correctAnswer) {
+                score++;
+              }
+            });
+            setQuizScore(score);
+            setShowQuizResult(true);
+          };
+
+          return (
+            <div className="min-h-screen font-inter text-gray-800">
+              {/* Navbar - Navigasi Scroll-to-Section */}
+              <nav className="fixed w-full bg-white bg-opacity-95 shadow-md z-50 py-4 px-6 md:px-12 rounded-b-lg">
+                <ul className="flex flex-wrap justify-center gap-4 text-sm md:text-base font-semibold">
+                  <li><button onClick={() => scrollToSection('intro')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-2 rounded-md">Beranda</button></li>
+                  <li><button onClick={() => scrollToSection('ronald')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-2 rounded-md">Kisah Ronald</button></li>
+                  <li><button onClick={() => scrollToSection('richard')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-2 rounded-md">Kisah Richard</button></li>
+                  <li><button onClick={() => scrollToSection('perbandingan')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-2 rounded-md">Perbandingan</button></li>
+                  <li><button onClick={() => scrollToSection('pelajaran')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-2 rounded-md">Pelajaran</button></li>
+                  <li><button onClick={() => scrollToSection('strategi')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-2 rounded-md">Strategi</button></li>
+                  <li><button onClick={() => scrollToSection('quiz')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-2 rounded-md">Quiz</button></li>
+                  <li><button onClick={() => scrollToSection('ringkasan')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-2 rounded-md">Ringkasan</button></li>
+                </ul>
+              </nav>
+
+              {/* Section 1: Pendahuluan Animatif */}
+              <section id="intro" className="relative h-screen flex flex-col justify-center items-center text-center p-8 bg-gradient-to-br from-blue-100 via-indigo-200 to-purple-200 overflow-hidden pt-20">
+                <h1 className="text-4xl md:text-6xl font-extrabold text-indigo-800 leading-tight mb-4 animate-fade-in-up" data-aos="zoom-in">
+                  Pensiunan OB Punya Aset 120 Miliar dari Investasi Saham
+                </h1>
+                <p className="text-lg md:text-2xl text-gray-700 mb-8 max-w-2xl animate-fade-in-up" data-aos="fade-up" data-aos-delay="200">
+                  Sebuah kisah inspiratif tentang pentingnya **perilaku finansial** daripada kecerdasan semata. Mari selami pelajaran dari dua individu kontras.
+                </p>
+                <div className="relative w-full h-40 md:h-64 mt-10">
+                  {/* Ilustrasi animasi sederhana: koin berputar dan pohon tumbuh */}
+                  <div className="absolute left-1/4 -top-8 w-20 h-20 md:w-32 md:h-32 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg transform rotate-45 animate-spin-slow opacity-0" data-aos="fade-right" data-aos-delay="400">
+                    <span className="text-4xl md:text-6xl text-yellow-800">$</span>
+                  </div>
+                  <div className="absolute right-1/4 -bottom-8 w-24 h-24 md:w-40 md:h-40 bg-green-400 rounded-full flex items-center justify-center shadow-lg transform scale-0 animate-grow-bounce opacity-0" data-aos="fade-left" data-aos-delay="600">
+                    <span className="text-4xl md:text-6xl text-green-800">🌳</span>
+                  </div>
+                </div>
+              </section>
+
+              {/* Section 2: Kisah Ronald Read */}
+              <section id="ronald" className="py-20 px-8 md:px-16 bg-white shadow-inner">
+                <h2 className="text-3xl md:text-5xl font-bold text-indigo-700 text-center mb-12" data-aos="fade-down">
+                  Kisah Ronald Read: Kesabaran Adalah Kunci Kekayaan
+                </h2>
+                <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+                  <div className="space-y-6" data-aos="fade-right">
+                    <p className="text-lg leading-relaxed">
+                      Ronald Read adalah seorang petugas kebersihan dan operator pom bensin sederhana di Vermont. Hidupnya jauh dari kemewahan, namun saat ia meninggal di usia 92 tahun pada tahun 2014, ia meninggalkan warisan mengejutkan: aset senilai <strong>$8 juta (sekitar 120 miliar Rupiah)</strong>.
+                    </p>
+                    <p className="text-lg leading-relaxed">
+                      Bagaimana mungkin? Kunci utamanya adalah <strong>konsistensi menabung</strong> dan <strong>investasi jangka panjang</strong> dalam saham-saham perusahaan mapan (blue-chip) selama puluhan tahun. Ia membeli saham, menahan, dan menginvestasikan kembali dividennya.
+                    </p>
+                    <div className="flex items-center gap-4 text-gray-600">
+                      <Lightbulb className="text-yellow-500" size={30} />
+                      <p className="text-base">Meskipun kaya, Ronald hidup sangat hemat: mengendarai Toyota Camry bekas, memperbaiki jaketnya sendiri, dan tidak pernah memamerkan kekayaannya.</p>
+                    </div>
+                  </div>
+                  <div className="relative h-64 md:h-96 bg-gray-100 rounded-lg shadow-lg flex items-center justify-center p-4 overflow-hidden" data-aos="zoom-in" data-aos-delay="300">
+                    {/* Visualisasi Pertumbuhan Kekayaan (Animasi Berbasis Data Sederhana) */}
+                    <div className="absolute bottom-0 left-0 right-0 h-0 bg-gradient-to-t from-green-300 to-green-500 rounded-b-lg animate-grow-height" style={{'--initial-height': '0%', '--final-height': '90%'}}>
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 p-2 bg-white rounded-full shadow-md text-sm font-bold text-green-700">
+                        $8 Juta
+                      </div>
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 h-1/6 bg-green-600 rounded-b-lg flex items-center justify-center text-white font-bold text-sm">
+                        Investasi Konsisten
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-12 text-center" data-aos="fade-up">
+                  <h3 className="text-2xl font-semibold text-indigo-600 mb-4">Timeline Kekayaan Ronald</h3>
+                  <div className="flex flex-wrap justify-center gap-4 md:gap-8 items-center relative py-6">
+                    <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-200"></div>
+                    {/* Timeline Event 1 */}
+                    <div className="relative z-10 w-32 h-32 bg-indigo-500 rounded-full flex flex-col items-center justify-center text-white p-2 shadow-lg hover:scale-105 transition-transform" data-aos="zoom-in" data-aos-delay="100">
+                      <span className="font-bold text-lg">1950s</span>
+                      <p className="text-xs text-center">Mulai Menabung & Investasi</p>
+                      <div className="absolute -bottom-8 text-sm">Gigih</div>
+                    </div>
+                    {/* Timeline Connector */}
+                    <div className="w-8 h-1 bg-indigo-300 transform scale-x-0 origin-left animate-scale-x" data-aos="fade-right" data-aos-delay="200"></div>
+                    {/* Timeline Event 2 */}
+                    <div className="relative z-10 w-32 h-32 bg-indigo-500 rounded-full flex flex-col items-center justify-center text-white p-2 shadow-lg hover:scale-105 transition-transform" data-aos="zoom-in" data-aos-delay="300">
+                      <span className="font-bold text-lg">Puluhan Tahun</span>
+                      <p className="text-xs text-center">Reinvestasi Dividen</p>
+                      <div className="absolute -bottom-8 text-sm">Disiplin</div>
+                    </div>
+                    {/* Timeline Connector */}
+                    <div className="w-8 h-1 bg-indigo-300 transform scale-x-0 origin-left animate-scale-x" data-aos="fade-right" data-aos-delay="400"></div>
+                    {/* Timeline Event 3 */}
+                    <div className="relative z-10 w-32 h-32 bg-indigo-500 rounded-full flex flex-col items-center justify-center text-white p-2 shadow-lg hover:scale-105 transition-transform" data-aos="zoom-in" data-aos-delay="500">
+                      <span className="font-bold text-lg">2014</span>
+                      <p className="text-xs text-center">Aset $8 Juta</p>
+                      <div className="absolute -bottom-8 text-sm">Warisan</div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Section 3: Kisah Richard Fuscone */}
+              <section id="richard" className="py-20 px-8 md:px-16 bg-gradient-to-br from-red-50 to-orange-50">
+                <h2 className="text-3xl md:text-5xl font-bold text-red-700 text-center mb-12" data-aos="fade-down">
+                  Kisah Richard Fuscone: Jebakan "Terlalu Banyak"
+                </h2>
+                <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+                  <div className="relative h-64 md:h-96 bg-red-100 rounded-lg shadow-lg flex items-center justify-center p-4 overflow-hidden" data-aos="zoom-in" data-aos-delay="300">
+                    {/* Visualisasi Kehancuran Kekayaan (Animasi Berbasis Data Sederhana) */}
+                    <div className="absolute top-0 left-0 right-0 h-full bg-gradient-to-b from-red-300 to-red-500 rounded-t-lg animate-shrink-height" style={{'--initial-height': '90%', '--final-height': '10%'}}>
+                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 p-2 bg-white rounded-full shadow-md text-sm font-bold text-red-700">
+                        Bangkrut
+                      </div>
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 h-1/6 bg-red-600 rounded-b-lg flex items-center justify-center text-white font-bold text-sm">
+                        Gaya Hidup Mewah & Utang
+                    </div>
+                  </div>
+                  <div className="space-y-6" data-aos="fade-left">
+                    <p className="text-lg leading-relaxed">
+                      Richard Fuscone adalah kebalikan dari Ronald. Seorang lulusan Harvard dan eksekutif Merrill Lynch yang sukses, ia pensiun di usia 40-an sebagai seorang filantropis. Namun, kekayaan dan kesuksesannya tiba-tiba runtuh.
+                    </p>
+                    <p className="text-lg leading-relaxed">
+                      Ia mengambil pinjaman besar untuk merenovasi rumah mewahnya seluas 1600 meter persegi, dengan biaya perawatan mencapai <strong>$90.000 per bulan</strong>. Krisis finansial 2008 menghantam, dan dengan utang besar serta aset tidak likuid, ia menyatakan bangkrut.
+                    </p>
+                    <div className="flex items-center gap-4 text-gray-600">
+                      <Lightbulb className="text-red-500" size={30} />
+                      <p className="text-base">Meskipun cerdas dan sukses, perilaku finansial Richard yang berlebihan dan kurang hati-hati membawanya pada kehancuran.</p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Section 4: Perbandingan Interaktif */}
+              <section id="perbandingan" className="py-20 px-8 md:px-16 bg-white shadow-inner">
+                <h2 className="text-3xl md:text-5xl font-bold text-teal-700 text-center mb-12" data-aos="fade-down">
+                  Perbandingan: Kecerdasan vs. Perilaku
+                </h2>
+                <div className="max-w-4xl mx-auto mb-8 flex justify-center space-x-4" data-aos="fade-up">
+                  <button
+                    onClick={() => setActiveTab('ronald')}
+                    className={`px-6 py-3 rounded-full text-lg font-semibold transition-all ${activeTab === 'ronald' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                  >
+                    Ronald Read
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('richard')}
+                    className={`px-6 py-3 rounded-full text-lg font-semibold transition-all ${activeTab === 'richard' ? 'bg-red-600 text-white shadow-lg' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                  >
+                    Richard Fuscone
+                  </button>
+                </div>
+
+                <div className="relative p-6 rounded-lg shadow-xl min-h-[300px] flex items-center justify-center bg-gray-50 transition-all duration-500">
+                  {activeTab === 'ronald' && (
+                    <div className="flex flex-col md:flex-row items-center gap-8 animate-fade-in-right">
+                      <div className="flex-shrink-0">
+                        <img src="https://placehold.co/150x150/81C784/ffffff?text=Ronald" alt="Ronald Read" className="rounded-full shadow-md" />
+                      </div>
+                      <div className="text-center md:text-left">
+                        <h3 className="text-2xl font-bold text-indigo-800 mb-2">Ronald Read</h3>
+                        <ul className="list-disc list-inside space-y-2 text-lg text-gray-700">
+                          <li>Pendidikan: Tidak tinggi</li>
+                          <li>Pekerjaan: Petugas kebersihan, operator pom bensin</li>
+                          <li>Perilaku: Frugal, sabar, konsisten menabung & investasi</li>
+                          <li>Hasil: Kekayaan bersih $8 juta</li>
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+                  {activeTab === 'richard' && (
+                    <div className="flex flex-col md:flex-row items-center gap-8 animate-fade-in-left">
+                      <div className="flex-shrink-0">
+                        <img src="https://placehold.co/150x150/EF9A9A/ffffff?text=Richard" alt="Richard Fuscone" className="rounded-full shadow-md" />
+                      </div>
+                      <div className="text-center md:text-left">
+                        <h3 className="text-2xl font-bold text-red-800 mb-2">Richard Fuscone</h3>
+                        <ul className="list-disc list-inside space-y-2 text-lg text-gray-700">
+                          <li>Pendidikan: Lulusan Harvard</li>
+                          <li>Pekerjaan: Eksekutif Merrill Lynch</li>
+                          <li>Perilaku: Boros, utang berlebihan, pamer kekayaan</li>
+                          <li>Hasil: Bangkrut</li>
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </section>
+
+              {/* Section 5: Pelajaran Kunci: Psikologi Uang */}
+              <section id="pelajaran" className="py-20 px-8 md:px-16 bg-gradient-to-br from-green-50 to-blue-50">
+                <h2 className="text-3xl md:text-5xl font-bold text-green-700 text-center mb-12" data-aos="fade-down">
+                  Pelajaran Kunci: Psikologi Uang
+                </h2>
+                <div className="max-w-4xl mx-auto text-center mb-12" data-aos="fade-up">
+                  <p className="text-lg leading-relaxed">
+                    Kisah Ronald dan Richard mengajarkan satu kebenaran fundamental: <strong>kesuksesan finansial lebih banyak berkaitan dengan perilaku Anda daripada tingkat kecerdasan Anda.</strong> Inilah yang disebut "Psikologi Uang".
+                  </p>
+                </div>
+
+                <div className="relative max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-xl" data-aos="zoom-in">
+                  <h3 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Diagram Interaktif: Otak Finansial</h3>
+                  <div className="flex flex-col md:flex-row justify-around items-center gap-8">
+                    <div className="relative p-6 bg-blue-100 rounded-full flex flex-col items-center justify-center w-48 h-48 md:w-64 md:h-64 shadow-md hover:scale-105 transition-transform cursor-pointer group"
+                         onClick={() => alert('Area ini merepresentasikan keputusan finansial yang didorong oleh emosi seperti FOMO (Fear Of Missing Out) atau panik.')}>
+                      <Heart className="text-blue-600 mb-2" size={48} />
+                      <p className="font-bold text-lg text-blue-800">Emosi</p>
+                      <p className="text-sm text-center text-blue-700 group-hover:block hidden absolute bg-white p-2 rounded-md shadow-lg -bottom-16 w-full opacity-0 group-hover:opacity-100 transition-opacity">FOMO, Panik, Euforia</p>
+                    </div>
+                    <div className="text-3xl font-bold text-gray-600 hidden md:block">vs</div>
+                    <div className="relative p-6 bg-green-100 rounded-full flex flex-col items-center justify-center w-48 h-48 md:w-64 md:h-64 shadow-md hover:scale-105 transition-transform cursor-pointer group"
+                         onClick={() => alert('Area ini merepresentasikan keputusan finansial yang didasari oleh data, tujuan, dan perencanaan matang.')}>
+                      <Brain className="text-green-600 mb-2" size={48} />
+                      <p className="font-bold text-lg text-green-800">Logika</p>
+                      <p className="text-sm text-center text-green-700 group-hover:block hidden absolute bg-white p-2 rounded-md shadow-lg -bottom-16 w-full opacity-0 group-hover:opacity-100 transition-opacity">Data, Tujuan, Perencanaan</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-500 mt-6 text-center">Klik lingkaran untuk penjelasan singkat!</p>
+                </div>
+              </section>
+
+              {/* Section 6: Strategi untuk Keputusan Finansial yang Lebih Baik */}
+              <section id="strategi" className="py-20 px-8 md:px-16 bg-white shadow-inner">
+                <h2 className="text-3xl md:text-5xl font-bold text-purple-700 text-center mb-12" data-aos="fade-down">
+                  Strategi Cerdas untuk Keputusan Finansial
+                </h2>
+                <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                  {/* Strategi 1 */}
+                  <div className="relative bg-purple-100 p-8 rounded-lg shadow-lg text-center transform hover:scale-105 transition-transform group" data-aos="fade-up">
+                    <div className="p-4 bg-purple-300 rounded-full inline-block mb-4">
+                      <Scale className="text-purple-700" size={36} />
+                    </div>
+                    <h3 className="text-xl font-bold text-purple-800 mb-3">1. Masa Pendinginan (24 Jam)</h3>
+                    <p className="text-gray-700 group-hover:hidden transition-opacity">Jangan ambil keputusan finansial saat emosi memuncak.</p>
+                    <p className="text-gray-700 hidden group-hover:block transition-opacity">Beri diri Anda waktu setidaknya 24 jam sebelum membuat keputusan beli/jual impulsif di pasar saham. Ini memberi ruang bagi logika untuk muncul.</p>
+                  </div>
+
+                  {/* Strategi 2 */}
+                  <div className="relative bg-purple-100 p-8 rounded-lg shadow-lg text-center transform hover:scale-105 transition-transform group" data-aos="fade-up" data-aos-delay="200">
+                    <div className="p-4 bg-purple-300 rounded-full inline-block mb-4">
+                      <Target className="text-purple-700" size={36} />
+                    </div>
+                    <h3 className="text-xl font-bold text-purple-800 mb-3">2. Tetapkan Target & Batasan</h3>
+                    <p className="text-gray-700 group-hover:hidden transition-opacity">Definisikan kapan Anda akan membeli atau menjual.</p>
+                    <p className="text-gray-700 hidden group-hover:block transition-opacity">Tentukan tujuan investasi Anda (misalnya, untuk pensiun, membeli rumah) dan batas toleransi risiko Anda. Jangan mudah terpengaruh fluktuasi pasar.</p>
+                  </div>
+
+                  {/* Strategi 3 */}
+                  <div className="relative bg-purple-100 p-8 rounded-lg shadow-lg text-center transform hover:scale-105 transition-transform group" data-aos="fade-up" data-aos-delay="400">
+                    <div className="p-4 bg-purple-300 rounded-full inline-block mb-4">
+                      <Lightbulb className="text-purple-700" size={36} />
+                    </div>
+                    <h3 className="text-xl font-bold text-purple-800 mb-3">3. Ingat Tujuan Utama Anda</h3>
+                    <p className="text-gray-700 group-hover:hidden transition-opacity">Fokus pada tujuan jangka panjang, bukan tren sesaat.</p>
+                    <p className="text-gray-700 hidden group-hover:block transition-opacity">Selalu kembali ke alasan awal Anda berinvestasi. Hindari FOMO (Fear Of Missing Out) atau keputusan impulsif karena tren pasar jangka pendek.</p>
+                  </div>
+                </div>
+              </section>
+
+              {/* Section 7: Quiz Singkat */}
+              <section id="quiz" className="py-20 px-8 md:px-16 bg-gradient-to-br from-yellow-50 to-orange-50">
+                <h2 className="text-3xl md:text-5xl font-bold text-orange-700 text-center mb-12" data-aos="fade-down">
+                  Uji Pemahaman Anda!
+                </h2>
+                <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-xl" data-aos="zoom-in">
+                  {quizQuestions.map((q, qIndex) => (
+                    <div key={qIndex} className="mb-8 p-4 border border-orange-200 rounded-lg bg-orange-50">
+                      <p className="font-semibold text-lg mb-4 text-orange-800">{qIndex + 1}. {q.question}</p>
+                      <div className="space-y-3">
+                        {q.options.map((option, oIndex) => (
+                          <label key={oIndex} className="flex items-center space-x-3 cursor-pointer text-gray-700">
+                            <input
+                              type="radio"
+                              name={`question-${qIndex}`}
+                              value={option}
+                              checked={selectedAnswers[qIndex] === option}
+                              onChange={() => handleAnswerChange(qIndex, option)}
+                              className="form-radio text-orange-600 h-5 w-5"
+                            />
+                            <span>{option}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    onClick={handleSubmitQuiz}
+                    className="w-full bg-orange-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-orange-700 transition-colors shadow-md"
+                  >
+                    Selesai Quiz
+                  </button>
+
+                  {showQuizResult && (
+                    <div className="mt-8 p-6 bg-orange-100 rounded-lg text-center shadow-inner animate-fade-in">
+                      <h3 className="text-2xl font-bold text-orange-800 mb-4">Hasil Quiz Anda:</h3>
+                      <p className="text-xl text-gray-700">
+                        Anda mendapatkan <strong>{quizScore} dari {quizQuestions.length}</strong> jawaban benar.
+                      </p>
+                      {quizScore === quizQuestions.length ? (
+                        <p className="text-green-600 font-semibold mt-2 flex justify-center items-center gap-2"><CheckCircle /> Hebat! Anda memahami inti pelajarannya!</p>
+                      ) : (
+                        <p className="text-red-600 font-semibold mt-2 flex justify-center items-center gap-2"><XCircle /> Terus belajar dan perbaiki pemahaman Anda!</p>
+                      )}
+                      <button
+                        onClick={() => {
+                          setShowQuizResult(false);
+                          setSelectedAnswers({});
+                          setQuizScore(0);
+                        }}
+                        className="mt-4 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+                      >
+                        Ulangi Quiz
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </section>
+
+              {/* Section 8: Ringkasan Interaktif */}
+              <section id="ringkasan" className="py-20 px-8 md:px-16 bg-indigo-50 shadow-inner">
+                <h2 className="text-3xl md:text-5xl font-bold text-indigo-700 text-center mb-12" data-aos="fade-down">
+                  Poin-Poin Penting (Flashcards)
+                </h2>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                  {[
+                    { title: "Perilaku > Kecerdasan", desc: "Kesuksesan finansial lebih didorong oleh perilaku daripada tingkat kecerdasan." },
+                    { title: "Kisah Ronald Read", desc: "Konsisten menabung & investasi jangka panjang membawa hasil luar biasa." },
+                    { title: "Kisah Richard Fuscone", desc: "Gaya hidup berlebihan dan utang bisa menghancurkan kekayaan." },
+                    { title: "Masa Pendinginan", desc: "Beri waktu 24 jam sebelum keputusan finansial impulsif." },
+                    { title: "Target & Batasan", desc: "Definisikan tujuan investasi dan toleransi risiko pribadi." },
+                    { title: "Ingat Tujuan", desc: "Fokus pada tujuan jangka panjang, hindari FOMO." }
+                  ].map((item, index) => (
+                    <div
+                      key={index}
+                      className="group relative bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer overflow-hidden"
+                      data-aos="fade-up" data-aos-delay={index * 100}
+                    >
+                      <h3 className="text-xl font-bold text-indigo-800 mb-3">{item.title}</h3>
+                      <p className="text-gray-700">{item.desc}</p>
+                      {/* Efek flashcard - bisa lebih kompleks dengan transisi CSS */}
+                      <div className="absolute inset-0 bg-indigo-200 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4 text-center text-indigo-900 font-semibold text-lg transform translate-y-full group-hover:translate-y-0 duration-300">
+                        {item.desc}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* Footer */}
+              <footer className="py-8 text-center text-gray-600 bg-gray-100 text-sm">
+                <p>&copy; 2024 Pembelajaran Finansial Interaktif. Dibuat dengan 💖 untuk pemahaman yang lebih baik.</p>
+                <p className="mt-2">Sumber: Video YouTube "Pensiunan OB Punya Aset 120 Miliar dari Investasi Saham" - <a href="https://youtu.be/mCmgcDEHFfc?si=scrlInfp3fdg8eQX" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Link Video</a></p>
+              </footer>
+            </div>
+          );
+        }
+
+        const container = document.getElementById('root');
+        const root = createRoot(container);
+        root.render(<App />);
+    </script>
+    <!-- AOS JS CDN (Initialize AFTER React app render) -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Ensure AOS initializes after the React components are rendered
+        window.addEventListener('load', () => {
+            if (typeof AOS !== 'undefined') {
+                AOS.init();
+            }
+        });
+    </script>
+</body>
+</html>
