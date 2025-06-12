@@ -83,8 +83,9 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
-        const { createRoot } = ReactDOM;
+        // Access React and ReactDOM from the global window object after CDN loads
+        const { useState, useEffect, useRef } = window.React;
+        const { createRoot } = window.ReactDOM;
 
         // Inline SVG Icons (replacing Lucide React imports)
         const Lightbulb = ({ size = 24, className = '', ...props }) => (
@@ -143,6 +144,7 @@
           const [quizScore, setQuizScore] = useState(0);
           const [showQuizResult, setShowQuizResult] = useState(false);
           const [selectedAnswers, setSelectedAnswers] = useState({});
+          const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State untuk menu mobile
 
           const quizQuestions = [
             {
@@ -187,9 +189,10 @@
             }
           }, []);
 
-          // Fungsi untuk scroll halus ke bagian tertentu
+          // Fungsi untuk scroll halus ke bagian tertentu dan menutup menu mobile
           const scrollToSection = (id) => {
             document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+            setIsMobileMenuOpen(false); // Tutup menu mobile setelah klik link
           };
 
           // Fungsi untuk menangani perubahan jawaban quiz
@@ -215,8 +218,23 @@
           return (
             <div className="min-h-screen font-inter text-gray-800">
               {/* Navbar - Navigasi Scroll-to-Section */}
-              <nav className="fixed w-full bg-white bg-opacity-95 shadow-md z-50 py-4 px-6 md:px-12 rounded-b-lg">
-                <ul className="flex flex-wrap justify-center gap-4 text-sm md:text-base font-semibold">
+              <nav className="fixed w-full bg-white bg-opacity-95 shadow-md z-50 py-4 px-6 md:px-12 rounded-b-lg flex justify-between items-center">
+                {/* Logo atau Judul Singkat */}
+                <span className="text-lg md:text-xl font-bold text-indigo-800">Psikologi Uang</span>
+
+                {/* Tombol Hamburger Menu (Hanya terlihat di mobile) */}
+                <button
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className="md:hidden p-2 rounded-md text-indigo-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  aria-label="Toggle navigation menu"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                  </svg>
+                </button>
+
+                {/* Navigasi Desktop (Hidden on mobile) */}
+                <ul className="hidden md:flex flex-wrap justify-center gap-4 text-sm md:text-base font-semibold">
                   <li><button onClick={() => scrollToSection('intro')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-2 rounded-md">Beranda</button></li>
                   <li><button onClick={() => scrollToSection('ronald')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-2 rounded-md">Kisah Ronald</button></li>
                   <li><button onClick={() => scrollToSection('richard')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-2 rounded-md">Kisah Richard</button></li>
@@ -227,6 +245,20 @@
                   <li><button onClick={() => scrollToSection('ringkasan')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-2 rounded-md">Ringkasan</button></li>
                 </ul>
               </nav>
+
+              {/* Navigasi Mobile (Muncul saat hamburger diklik) */}
+              <div className={`fixed inset-0 bg-white bg-opacity-95 z-40 transition-transform duration-300 ease-in-out transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:hidden`}>
+                <ul className="flex flex-col items-center justify-center h-full space-y-6 text-xl font-semibold pt-20">
+                  <li><button onClick={() => scrollToSection('intro')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-3 rounded-md w-full">Beranda</button></li>
+                  <li><button onClick={() => scrollToSection('ronald')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-3 rounded-md w-full">Kisah Ronald</button></li>
+                  <li><button onClick={() => scrollToSection('richard')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-3 rounded-md w-full">Kisah Richard</button></li>
+                  <li><button onClick={() => scrollToSection('perbandingan')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-3 rounded-md w-full">Perbandingan</button></li>
+                  <li><button onClick={() => scrollToSection('pelajaran')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-3 rounded-md w-full">Pelajaran</button></li>
+                  <li><button onClick={() => scrollToSection('strategi')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-3 rounded-md w-full">Strategi</button></li>
+                  <li><button onClick={() => scrollToSection('quiz')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-3 rounded-md w-full">Quiz</button></li>
+                  <li><button onClick={() => scrollToSection('ringkasan')} className="text-indigo-700 hover:text-indigo-900 transition-colors p-3 rounded-md w-full">Ringkasan</button></li>
+                </ul>
+              </div>
 
               {/* Section 1: Pendahuluan Animatif */}
               <section id="intro" className="relative h-screen flex flex-col justify-center items-center text-center p-8 bg-gradient-to-br from-blue-100 via-indigo-200 to-purple-200 overflow-hidden pt-20">
