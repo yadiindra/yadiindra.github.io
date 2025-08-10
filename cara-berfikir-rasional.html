@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Makanya Mikir: Panduan Interaktif Berpikir Rasional</title>
+  <meta name="description" content="Halaman interaktif untuk belajar berpikir rasional berdasarkan prinsip dari Kania Citta." />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: #0b1020;
+      --bg-soft: #0f1530;
+      --card: #121936;
+      --text: #eaf2ff;
+      --muted: #a6b0cf;
+      --accent: #7aa2ff;
+      --accent-2: #8ef0c5;
+      --danger: #ff7676;
+      --warning: #ffd166;
+      --ok: #7bd88f;
+      --shadow: 0 20px 50px rgba(0,0,0,.35);
+      --radius: 16px;
+    }
+    *, *::before, *::after{ box-sizing: border-box; }
+    html{ scroll-behavior: smooth; }
+    body{
+      margin:0; font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, 'Helvetica Neue', Arial, sans-serif;
+      color: var(--text); background: radial-gradient(1200px 600px at 20% -10%, rgba(122,162,255,.25), transparent 40%),
+                               radial-gradient(900px 500px at 80% 10%, rgba(142,240,197,.18), transparent 40%),
+                               linear-gradient(180deg, var(--bg) 0%, #090d1a 100%);
+    }
+    a{ color: var(--accent-2); text-decoration: none; }
+    .container{ width:min(1100px, 92%); margin-inline:auto; }
+
+    /* Utility */
+    .tag{ display:inline-flex; gap:.5rem; align-items:center; padding:.4rem .8rem; border-radius:999px; background:rgba(122,162,255,.12); color:var(--text); border:1px solid rgba(122,162,255,.25); font-size:.85rem; }
+    .grid{ display:grid; gap:1rem; }
+    .center{ display:grid; place-items:center; }
+    .muted{ color: var(--muted); }
+
+    /* Header / Hero */
+    header{
+      position:relative; min-height: 92vh; display:grid; place-items:center; overflow:hidden;
+      background: radial-gradient(900px 500px at 80% 10%, rgba(122,162,255,.12), transparent 40%);
+    }
+    .hero{
+      text-align:center; padding: 8rem 0 4rem; position:relative; z-index:2;
+    }
+    h1{
+      font-size: clamp(2rem, 6vw, 4rem); line-height:1.05; margin:0 0 1rem; letter-spacing:-0.02em;
+    }
+    .subtitle{ font-size: clamp(1rem, 2.4vw, 1.25rem); color: var(--muted); max-width: 60ch; margin-inline:auto; }
+
+    /* Scroll cue */
+    .scroll-cue{ position:absolute; bottom:28px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:.6rem; color:var(--muted); }
+    .arrow{ width: 22px; height: 36px; border:2px solid rgba(255,255,255,.35); border-radius:12px; position:relative; }
+    .arrow::after{ content:""; position:absolute; left:50%; top:8px; width:6px; height:6px; border-left:2px solid rgba(255,255,255,.6); border-bottom:2px solid rgba(255,255,255,.6); transform:translateX(-50%) rotate(-45deg); animation: bob 1.2s ease-in-out infinite; }
+    @keyframes bob{ 0%,100%{ transform:translate(-50%,0) rotate(-45deg);} 50%{ transform:translate(-50%,8px) rotate(-45deg);} }
+
+    /* Sections */
+    section{ padding: 5rem 0; position:relative; }
+    section.alt{ background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0) 60%); }
+    .section-title{ font-size: clamp(1.5rem, 4vw, 2.25rem); margin:0 0 1rem; }
+    .section-desc{ color: var(--muted); margin:0 0 2rem; }
+
+    /* Reveal on scroll */
+    .reveal{ opacity:0; transform: translateY(18px) scale(.98); filter: blur(2px); transition: all .8s cubic-bezier(.2,.6,0,1);
+    }
+    .reveal.visible{ opacity:1; transform:none; filter:none; }
+
+    /* Definition highlight */
+    .def{
+      font-size: clamp(1.05rem, 2.2vw, 1.25rem); line-height:1.8; background: rgba(255,255,255,.02);
+      border:1px solid rgba(255,255,255,.08); border-radius: var(--radius);
+      padding: 1.25rem; box-shadow: var(--shadow);
+    }
+    .def b{
+      position:relative; color: white;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .underline-swish{
+      position:relative; display:inline-block; padding-bottom:.2rem;
+    }
+    .underline-swish::after{
+      content:""; position:absolute; left:-2px; right:-2px; bottom:-2px; height:6px; border-radius:999px; background: linear-gradient(90deg, rgba(122,162,255,.35), rgba(142,240,197,.35)); filter: blur(6px);
+    }
+
+    /* Cards generic */
+    .cards{ display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:1.25rem; }
+    .card{ background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:1px solid rgba(255,255,255,.08);
+           border-radius: var(--radius); padding:1.25rem; box-shadow: var(--shadow); position:relative; overflow:hidden;
+           transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
+    .card:hover{ transform: translateY(-4px) scale(1.02); border-color: rgba(122,162,255,.35); box-shadow: 0 20px 60px rgba(20,40,120,.35); }
+    .card h3{ margin:.25rem 0 .5rem; font-size:1.15rem; }
+    .icon{ width:36px; height:36px; display:inline-grid; place-items:center; border-radius:10px; background: rgba(122,162,255,.15); border:1px solid rgba(122,162,255,.25); }
+
+    /* Mila Dilemma */
+    .mila-grid{ display:grid; grid-template-columns: 1fr; gap:1.25rem; }
+    @media(min-width:780px){ .mila-grid{ grid-template-columns: repeat(2,1fr); } }
+    .choice{ cursor:pointer; user-select:none; }
+    .choice.selected{ outline: 2px solid var(--accent-2); box-shadow: 0 0 0 6px rgba(142,240,197,.15); }
+    .choice .meta{ color: var(--muted); font-size:.95rem; }
+    .result{ margin-top:1rem; padding:1rem; border-radius:12px; border:1px dashed rgba(255,255,255,.15); background: rgba(142,240,197,.06); display:none; }
+    .result.show{ display:block; animation: pop .35s ease; }
+    @keyframes pop{ from{ opacity:0; transform: translateY(6px) scale(.98);} to{ opacity:1; transform:none; } }
+
+    /* Principles */
+    .principle{ position:relative; }
+    .principle .hover{ position:absolute; inset:0; background: rgba(0,0,0,.55); display:grid; place-items:center; opacity:0; transition:opacity .25s ease; text-align:center; padding:1rem; }
+    .principle:hover .hover{ opacity:1; }
+
+    /* Scale Visualization */
+    .scale-wrap{ display:grid; gap:1rem; place-items:center; }
+    .scale{ width:min(520px, 92%); height:180px; position:relative; }
+    .pivot{ position:absolute; left:50%; bottom:26px; width:10px; height:10px; background: #d9e2ff; border-radius:50%; transform:translateX(-50%); box-shadow:0 0 0 6px rgba(122,162,255,.15); }
+    .beam{ position:absolute; left:10%; right:10%; bottom:90px; height:6px; background: linear-gradient(90deg, #7aa2ff, #8ef0c5); border-radius:999px; transform-origin:50% 50%; transition: transform .3s ease; box-shadow: inset 0 -2px 4px rgba(0,0,0,.25), 0 6px 16px rgba(0,0,0,.25); }
+    .pan{ position:absolute; width:120px; height:14px; background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:999px; bottom:50px; box-shadow: var(--shadow); }
+    .pan::after{ content:""; position:absolute; left:50%; transform:translateX(-50%); bottom:-10px; width:2px; height:14px; background: rgba(255,255,255,.4); }
+    .pan.left{ left: calc(10% + 6px); }
+    .pan.right{ right: calc(10% + 6px); }
+    .labels{ display:flex; gap:1rem; justify-content:space-between; width:min(520px, 92%); }
+    .labels span{ font-weight:600; }
+
+    .range{ width:min(520px, 92%); accent-color: var(--accent); }
+    .tip{ color: var(--muted); font-size:.95rem; text-align:center; }
+
+    /* Bodoh vs Jahat */
+    .bj-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:1rem; }
+    .bj-card{ position:relative; overflow:hidden; }
+    .badge{ position:absolute; top:12px; right:12px; font-size:.75rem; padding:.25rem .5rem; border-radius:999px; border:1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.06); }
+    .emoji{ font-size:2rem; }
+
+    /* Footer */
+    footer{ padding:3rem 0; color: var(--muted); text-align:center; border-top:1px solid rgba(255,255,255,.06); background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)); }
+
+    /* Accessibility prefers-reduced-motion */
+    @media (prefers-reduced-motion: reduce){
+      .reveal{ transition:none; }
+      .card:hover{ transform:none; }
+      .result.show{ animation:none; }
+    }
+  </style>
+</head>
+<body>
+  <header id="home" role="banner">
+    <div class="container hero">
+      <span class="tag" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 3v18m9-9H3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Interaktif • Responsif • Edukatif
+      </span>
+      <h1>Makanya Mikir: Panduan Interaktif Berpikir Rasional</h1>
+      <p class="subtitle">Mengubah cara Anda mengambil keputusan berdasarkan prinsip dari <b>Kania Citta</b>. Jelajahi definisi, studi kasus, prinsip utama, dan visualisasi cost–benefit dengan pengalaman yang menyenangkan.</p>
+      <div class="scroll-cue" aria-hidden="true">
+        <span class="muted">Gulir ke bawah</span>
+        <div class="arrow" title="Scroll"></div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Section 1: Definisi -->
+    <section class="alt" id="definisi" aria-labelledby="s1-title">
+      <div class="container">
+        <h2 id="s1-title" class="section-title reveal">Apa itu Rasional?</h2>
+        <p class="section-desc reveal">Rasionalitas <em>bukan</em> tentang benar atau salah—melainkan tentang seberapa selaras tindakan Anda dengan tujuan yang ingin dicapai.</p>
+        <div class="def reveal" role="note">
+          <strong>Definisi:</strong> <span>Rasional berarti <span class="underline-swish"><b>kesesuaian tindakan dengan tujuan</b></span>—yakni <em>tindakan berorientasi pada tujuan</em>.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Studi Kasus Mila -->
+    <section id="mila" aria-labelledby="s2-title">
+      <div class="container">
+        <h2 id="s2-title" class="section-title reveal">Studi Kasus Interaktif: Dilema Mila</h2>
+        <p class="section-desc reveal">Anda di posisi Mila. Pilih salah satu opsi di bawah untuk melihat mengapa pilihan itu bisa <em>rasional</em>—tergantung tujuan yang Anda utamakan.</p>
+
+        <div class="mila-grid">
+          <article class="card choice reveal" tabindex="0" data-choice="A" aria-label="Pilih Pria yang Disukai">
+            <div class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 21s-6-4.35-9-8.35C1 9 3 6 6 6c2 0 3.5 1.5 3.5 1.5S11 6 13 6c3 0 5 3 3 6.65C18 16.65 12 21 12 21Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+              </svg>
+            </div>
+            <h3>Pria yang Disukai</h3>
+            <p class="meta">Penghasilan rendah, namun Anda bahagia bersamanya.</p>
+          </article>
+
+          <article class="card choice reveal" tabindex="0" data-choice="B" aria-label="Pilih Pria yang Mapan">
+            <div class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 12h18M3 7h18M3 17h18" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <h3>Pria yang Mapan</h3>
+            <p class="meta">Sangat mapan, tapi Anda tidak memiliki perasaan.</p>
+          </article>
+        </div>
+
+        <div class="result" id="mila-result" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- Section 3: Prinsip Utama -->
+    <section class="alt" id="prinsip" aria-labelledby="s3-title">
+      <div class="container">
+        <h2 id="s3-title" class="section-title reveal">Prinsip Kunci: Selalu Mulai dari Tujuan</h2>
+        <p class="section-desc reveal">Tujuan yang jelas memandu prioritas, kriteria evaluasi, dan tindakan. Arah tanpa tujuan adalah kebetulan.</p>
+
+        <div class="cards">
+          <div class="card principle reveal">
+            <div class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 21V3m0 0l4 4m-4-4L8 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3>Tentukan North Star</h3>
+            <p class="muted">Rumusan tujuan yang spesifik membuat keputusan lebih konsisten.</p>
+            <div class="hover" aria-hidden="true">Tulis tujuan Anda dalam format: <br><strong>Ingin X, sebelum Y, dengan Z.</strong></div>
+          </div>
+          <div class="card principle reveal">
+            <div class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <h3>Definisikan Kriteria</h3>
+            <p class="muted">Apa indikator tercapainya tujuan? Bikin daftar 3–5 kriteria.</p>
+            <div class="hover" aria-hidden="true">Contoh: kebahagiaan emosional, waktu luang, keamanan finansial.</div>
+          </div>
+          <div class="card principle reveal">
+            <div class="icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 12l4 4 8-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3>Ukur Kesesuaian</h3>
+            <p class="muted">Tanya: opsi mana paling mendekatkan saya ke tujuan?</p>
+            <div class="hover" aria-hidden="true">Skor tiap opsi 1–5 untuk setiap kriteria. Ambil yang totalnya paling tinggi.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Cost vs Benefit Scale -->
+    <section id="scale" aria-labelledby="s4-title">
+      <div class="container">
+        <h2 id="s4-title" class="section-title reveal">Visualisasi Cost vs. Benefit</h2>
+        <p class="section-desc reveal">Setiap orang punya "timbangan" yang berbeda. Apa yang berat bagi Anda, bisa jadi ringan bagi orang lain.</p>
+
+        <div class="scale-wrap">
+          <div class="labels reveal" aria-hidden="true">
+            <span>Cost</span>
+            <span>Benefit</span>
+          </div>
+          <div class="scale" aria-label="Timbangan cost benefit">
+            <div class="beam" id="beam"></div>
+            <div class="pan left" title="Cost"></div>
+            <div class="pan right" title="Benefit"></div>
+            <div class="pivot" aria-hidden="true"></div>
+          </div>
+          <input class="range reveal" id="weight" type="range" min="-20" max="20" value="0" aria-label="Sesuaikan persepsi: geser kiri bila cost terasa lebih berat, kanan bila benefit lebih berat" />
+          <p class="tip" id="tip">Neutral: Anda menilai cost dan benefit seimbang.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Bodoh vs Jahat -->
+    <section class="alt" id="bj" aria-labelledby="s5-title">
+      <div class="container">
+        <h2 id="s5-title" class="section-title reveal">Perbedaan "Bodoh" vs "Jahat"</h2>
+        <p class="section-desc reveal">Jangan cepat menghakimi. Bedakan <em>ketidaktahuan/ketidakcakapaan</em> dari <em>niat yang merugikan</em>.</p>
+        <div class="bj-grid">
+          <div class="card bj-card reveal">
+            <span class="badge" aria-hidden="true">Kesalahan karena info/skill</span>
+            <div class="emoji" aria-hidden="true">🧩</div>
+            <h3>"Bodoh"</h3>
+            <p class="muted">Tindakan <strong>tidak selaras</strong> dengan tujuan <em>karena</em> kurang informasi atau kompetensi. Solusi: edukasi, bimbingan, umpan balik.</p>
+          </div>
+          <div class="card bj-card reveal">
+            <span class="badge" aria-hidden="true">Niat bertentangan dengan kebaikan</span>
+            <div class="emoji" aria-hidden="true">🛑</div>
+            <h3>"Jahat"</h3>
+            <p class="muted">Tindakan <strong>selaras</strong> dengan <em>tujuannya sendiri</em> namun tujuan itu <strong>merugikan orang lain</strong>. Respon: batasan, akuntabilitas, konsekuensi.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: Kesimpulan -->
+    <section id="kesimpulan" aria-labelledby="s6-title">
+      <div class="container">
+        <h2 id="s6-title" class="section-title reveal">Kesimpulan</h2>
+        <div class="def reveal">
+          <p>Berpikir rasional adalah <strong>keterampilan</strong> untuk mencapai tujuan—bukan alat untuk menghakimi orang lain. Mulailah dari tujuan, definisikan kriteria, timbang cost–benefit sesuai konteks Anda, lalu ambil tindakan yang paling <em>selaras</em>.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer role="contentinfo">
+    <div class="container">
+      Dibuat untuk pembelajaran mandiri. © <span id="year"></span> • <a href="#home">Kembali ke atas</a>
+    </div>
+  </footer>
+
+  <script>
+    // Intersection Observer for reveal-on-scroll
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(ent=>{
+        if(ent.isIntersecting){ ent.target.classList.add('visible'); io.unobserve(ent.target); }
+      })
+    }, {threshold: .2});
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+    // Mila choices
+    const result = document.getElementById('mila-result');
+    const choices = document.querySelectorAll('.choice');
+    const explain = {
+      'A': 'Pilihan Anda <strong>rasional</strong> jika tujuan utama Anda adalah <u>kebahagiaan emosional</u>. Anda mengutamakan kualitas hubungan sebagai jalan menuju hidup yang bermakna.',
+      'B': 'Pilihan Anda <strong>rasional</strong> jika tujuan utama Anda adalah <u>keamanan finansial</u>. Anda menilai stabilitas materi sebagai landasan keputusan jangka panjang.'
+    };
+    function selectChoice(key){
+      choices.forEach(c=>c.classList.toggle('selected', c.dataset.choice===key));
+      result.innerHTML = '<span class="tag" aria-hidden="true">Rasional ≠ Sama untuk Semua</span><div style="height:.5rem"></div>'+explain[key];
+      result.classList.add('show');
+    }
+    choices.forEach(c=>{
+      c.addEventListener('click', ()=> selectChoice(c.dataset.choice));
+      c.addEventListener('keypress', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); selectChoice(c.dataset.choice);} });
+    });
+
+    // Scale control
+    const beam = document.getElementById('beam');
+    const weight = document.getElementById('weight');
+    const tip = document.getElementById('tip');
+    function updateScale(){
+      const v = parseInt(weight.value,10) || 0; // -20 .. 20
+      const deg = v; // use value directly as degrees tilt
+      beam.style.transform = `rotate(${deg}deg)`;
+      if(v === 0){ tip.textContent = 'Neutral: Anda menilai cost dan benefit seimbang.'; }
+      else if(v < 0){ tip.textContent = `Anda menilai COST lebih berat (${Math.abs(v)}). Ini menunjukkan toleransi benefit lebih kecil untuk mengimbangi cost.`; }
+      else{ tip.textContent = `Anda menilai BENEFIT lebih berat (${v}). Ini menunjukkan kesiapan menerima cost demi hasil.`; }
+    }
+    weight.addEventListener('input', updateScale);
+    updateScale();
+
+    // Year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Small UX: smooth focus ring visibility on keyboard nav only
+    function handleFirstTab(e){
+      if (e.key === 'Tab'){
+        document.body.classList.add('user-tabbing');
+        window.removeEventListener('keydown', handleFirstTab);
+        window.addEventListener('mousedown', handleMouseDownOnce);
+      }
+    }
+    function handleMouseDownOnce(){
+      document.body.classList.remove('user-tabbing');
+      window.removeEventListener('mousedown', handleMouseDownOnce);
+      window.addEventListener('keydown', handleFirstTab);
+    }
+    window.addEventListener('keydown', handleFirstTab);
+  </script>
+  <style>
+    /* optional focus style when keyboard is used */
+    .user-tabbing .card:focus{ outline: 3px solid var(--accent-2); outline-offset: 2px; }
+  </style>
+</body>
+</html>
