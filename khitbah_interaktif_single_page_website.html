@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Khitbah: Lebih dari Sekadar Lamaran</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..800&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#F5F5DC; /* putih gading */
+      --text:#333333; /* abu gelap */
+      --gold:#FFD700; /* aksen emas */
+      --teal:#40E0D0; /* aksen toska */
+      --muted:#6b7280;
+      --card:#ffffff;
+      --shadow: 0 10px 25px rgba(0,0,0,.08);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Manrope,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif;line-height:1.6}
+    img,svg{max-width:100%;display:block}
+    a{color:inherit}
+    .container{width:min(1100px,92vw);margin-inline:auto}
+    .btn{display:inline-flex;align-items:center;gap:.5rem;border:none;background:var(--teal);color:#0b1b1a;padding:.9rem 1.1rem;border-radius:999px;font-weight:700;cursor:pointer;box-shadow:var(--shadow);transition:transform .2s ease}
+    .btn:hover{transform:translateY(-2px)}
+
+    /* Reveal on scroll */
+    .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease, transform .7s ease}
+    .reveal.show{opacity:1;transform:none}
+
+    /* HERO */
+    header{
+      position:relative;overflow:hidden;
+      background:linear-gradient(180deg, rgba(64,224,208,.15), transparent 45%);
+    }
+    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center;padding:72px 0}
+    .hero h1{font-family:Poppins,Manrope,sans-serif;font-size:clamp(32px,4.5vw,52px);line-height:1.1;margin:0 0 10px}
+    .sub{font-size:clamp(16px,2vw,20px);color:#444;margin:0 0 22px}
+    .rings{aspect-ratio:1.1/1;place-self:center;max-width:420px;filter:drop-shadow(0 20px 35px rgba(0,0,0,.08))}
+    .ring{fill:none;stroke-width:10}
+    .ring.gold{stroke:var(--gold)}
+    .ring.teal{stroke:var(--teal)}
+    .ring-group{transform-origin:center;animation:ringFloat 8s ease-in-out infinite alternate}
+    @keyframes ringFloat{to{transform:translateY(-8px) rotate(-3deg)}}
+
+    /* SECTION */
+    section{padding:56px 0}
+    .section-title{font-family:Poppins,Manrope,sans-serif;font-weight:700;font-size:clamp(22px,3vw,30px);margin:0 0 18px}
+    .section-lead{color:var(--muted);margin:0 0 24px}
+
+    /* CARDS – Akar Kata */
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);position:relative;isolation:isolate;cursor:pointer;border:1px solid rgba(0,0,0,.05);transition:transform .25s ease, box-shadow .25s ease}
+    .card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(0,0,0,.12)}
+    .card h3{font-family:Poppins,Manrope,sans-serif;margin:6px 0 8px;font-size:20px}
+    .card p{margin:0;color:#475569}
+    .icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--teal),var(--gold));display:grid;place-items:center;box-shadow:0 8px 18px rgba(0,0,0,.1)}
+    .card .details{margin-top:10px;display:none}
+    .card.active .details{display:block}
+    .hint{font-size:13px;color:var(--muted);margin-top:10px}
+
+    /* KAYU BAKAR */
+    .stack-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center}
+    .log-area{background:var(--card);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);position:relative;min-height:280px;display:grid;place-items:center}
+    .logs{position:relative;width:min(520px,90%);height:220px}
+    .log{position:absolute;width:220px;height:26px;border-radius:14px;background:#a16207;box-shadow:inset 0 0 0 4px #7c4a04, 0 6px 14px rgba(0,0,0,.15)}
+    .log.l1{left:18%;top:62%;transform:rotate(-12deg)}
+    .log.l2{left:40%;top:54%;transform:rotate(8deg)}
+    .log.l3{left:26%;top:46%;transform:rotate(-4deg)}
+    .flame{position:absolute;left:50%;top:34%;transform:translate(-50%,-50%) scale(.6);opacity:0;filter:drop-shadow(0 20px 40px rgba(255,136,0,.35))}
+    .flame svg{overflow:visible}
+    .flame .f{transform-origin:center;animation:flame 1.4s ease-in-out infinite alternate}
+    .flame .f2{animation-delay:.2s}
+    .flame .f3{animation-delay:.4s}
+    @keyframes flame{to{transform:translateY(-8px) scale(1.06)}}
+    .flame.lit{opacity:1;transition:opacity .9s ease}
+
+    /* SLIDER */
+    .slider{position:relative;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+    .slides{display:flex;transition:transform .45s ease}
+    .slide{min-width:100%;padding:28px}
+    .slide h4{font-family:Poppins,Manrope,sans-serif;margin:6px 0 8px;font-size:20px}
+    .slide p{margin:0;color:#475569}
+    .slide .sicon{width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,var(--gold),var(--teal));display:grid;place-items:center;box-shadow:0 8px 18px rgba(0,0,0,.1)}
+    .nav{position:absolute;inset:0;pointer-events:none}
+    .nav button{pointer-events:auto;position:absolute;top:50%;transform:translateY(-50%);border:none;background:rgba(0,0,0,.06);backdrop-filter:blur(2px);width:42px;height:42px;border-radius:999px;display:grid;place-items:center;cursor:pointer}
+    .nav button:hover{background:rgba(0,0,0,.12)}
+    .nav .prev{left:10px}
+    .nav .next{right:10px}
+    .dots{display:flex;gap:8px;justify-content:center;padding:14px}
+    .dot{width:8px;height:8px;border-radius:999px;background:#cbd5e1;transition:width .25s ease}
+    .dot.active{width:30px;background:var(--teal)}
+
+    /* LIST – Kesimpulan */
+    .tips{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+    .tip{display:flex;gap:12px;align-items:flex-start;background:var(--card);padding:14px 16px;border-radius:14px;border:1px solid rgba(0,0,0,.05);box-shadow:var(--shadow);opacity:.2;transform:translateY(8px);transition:opacity .5s ease, transform .5s ease}
+    .tip.show{opacity:1;transform:none}
+    .tip .tick{width:22px;height:22px;border-radius:6px;background:var(--teal);display:grid;place-items:center;font-weight:800}
+
+    /* FOOTER */
+    footer{padding:42px 0 52px;color:#64748b;font-size:14px}
+
+    /* RESPONSIVE */
+    @media (max-width: 900px){
+      .hero{grid-template-columns:1fr;gap:10px;padding:50px 0}
+      .rings{max-width:320px}
+      .cards{grid-template-columns:1fr}
+      .stack-wrap{grid-template-columns:1fr;gap:16px}
+    }
+    
+  /* Smooth scroll fix for anchor buttons */
+  html{scroll-behavior:smooth}
+</style>
+</head>
+<body>
+  <header>
+    <div class="container hero reveal">
+      <div>
+        <h1>Khitbah: Lebih dari Sekadar Lamaran</h1>
+        <p class="sub">Pahami makna, tantangan, dan hikmah di balik khitbah—disajikan modern, ringkas, dan interaktif.</p>
+        <a class="btn" href="#akar">Mulai Belajar</a>
+      </div>
+      <svg class="rings" viewBox="0 0 400 400" aria-hidden="true">
+        <g class="ring-group">
+          <circle class="ring gold" cx="150" cy="200" r="90"></circle>
+          <circle class="ring teal" cx="230" cy="200" r="90"></circle>
+        </g>
+      </svg>
+    </div>
+  </header>
+
+  <!-- Bagian 2: Definisi / Akar Kata -->
+  <section id="akar" class="container">
+    <h2 class="section-title reveal">Akar Kata yang Penuh Makna</h2>
+    <p class="section-lead reveal">Khitbah berasal dari akar kata Arab <strong>khataba</strong> yang bermakna jelas, singkat, dan padat. Klik tiap kartu untuk penjelasan.</p>
+    <div class="cards">
+      <article class="card reveal" data-key="jelas" tabindex="0" role="button" aria-pressed="false">
+        <div class="icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 4a1 1 0 0 1 1 1v3h3a1 1 0 1 1 0 2h-3v3a1 1 0 1 1-2 0v-3H8a1 1 0 1 1 0-2h3V7a1 1 0 0 1 1-1Z" fill="#fff"/></svg>
+        </div>
+        <h3>Jelas</h3>
+        <p class="details">Sampaikan niat melamar secara <em>terang</em> dan langsung ke tujuan. Tidak berputar-putar; ajukan maksud kepada wali/keluarga dengan santun.</p>
+        <p class="hint">Klik untuk sembunyikan/tampilkan</p>
+      </article>
+      <article class="card reveal" data-key="singkat" tabindex="0" role="button" aria-pressed="false">
+        <div class="icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 5a1 1 0 1 0-2 0v4.38l-2.1 2.1a1 1 0 0 0 1.4 1.42l2.4-2.4c.2-.2.3-.47.3-.75V7Z" fill="#fff"/></svg>
+        </div>
+        <h3>Singkat</h3>
+        <p class="details">Proses penyampaian jangan berlarut. Tetapkan ekspektasi, waktu, dan langkah berikutnya tanpa menunda yang tidak perlu.</p>
+        <p class="hint">Klik untuk sembunyikan/tampilkan</p>
+      </article>
+      <article class="card reveal" data-key="padat" tabindex="0" role="button" aria-pressed="false">
+        <div class="icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2 3 9l9 13 9-13-9-7Zm0 4.6 4.8 3.7L12 18.1 7.2 10.3 12 6.6Z" fill="#fff"/></svg>
+        </div>
+        <h3>Padat</h3>
+        <p class="details">Fokus pada inti: niat, kesiapan, dan komitmen. Hindari percakapan melebar yang mengaburkan tujuan akad.</p>
+        <p class="hint">Klik untuk sembunyikan/tampilkan</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Bagian 3: Metafora Kayu Bakar -->
+  <section id="kayu" class="container">
+    <div class="stack-wrap">
+      <div class="log-area reveal" aria-label="Ilustrasi kayu bakar dan api">
+        <div class="logs">
+          <div class="log l1" aria-hidden="true"></div>
+          <div class="log l2" aria-hidden="true"></div>
+          <div class="log l3" aria-hidden="true"></div>
+          <div class="flame" id="flame">
+            <svg width="160" height="220" viewBox="0 0 160 220" role="img" aria-label="Api kecil yang menyala">
+              <defs>
+                <radialGradient id="g1" cx="50%" cy="40%" r="60%">
+                  <stop offset="0%" stop-color="#fff3b0"/>
+                  <stop offset="70%" stop-color="#ffb703"/>
+                  <stop offset="100%" stop-color="#fb8500"/>
+                </radialGradient>
+              </defs>
+              <path class="f" d="M80 210c-30-30-40-60-28-92 6-16 20-28 28-48 8 20 22 32 28 48 12 32 2 62-28 92Z" fill="url(#g1)"/>
+              <path class="f f2" d="M80 190c-18-18-24-36-17-55 4-9 12-17 17-29 5 12 13 20 17 29 7 19 1 37-17 55Z" fill="#ffd166" opacity=".9"/>
+              <path class="f f3" d="M80 172c-10-10-13-20-9-32 2-5 6-10 9-17 3 7 7 12 9 17 4 12 0 22-9 32Z" fill="#ffe8a3" opacity=".85"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="reveal">
+        <h2 class="section-title">Metafora Kayu Bakar: Peringatan Penting</h2>
+        <p class="section-lead">Pada masa khitbah, kedekatan meningkat. Ibarat kayu bakar—mudah menyala jika tidak dijaga. Godaan bisa bertambah dan tujuan pernikahan bisa terganggu.</p>
+        <ul>
+          <li>Risiko merasa “sudah saling memiliki” padahal belum sah.</li>
+          <li>Godaan melampaui batas (bersentuhan, pelukan, unggah foto mesra sebelum halal).</li>
+          <li>Kasih sayang bisa “habis di depan”, membuat relasi hambar setelah akad.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bagian 4: Tantangan – Slider -->
+  <section id="tantangan" class="container">
+    <h2 class="section-title reveal">Tantangan Umum di Masa Khitbah</h2>
+    <p class="section-lead reveal">Geser untuk melihat beberapa contoh situasi yang kerap terjadi dan bagaimana menyikapinya secara bijak.</p>
+    <div class="slider reveal" aria-roledescription="carousel" aria-label="Tantangan khitbah" tabindex="0">
+      <div class="slides" id="slides">
+        <div class="slide" role="group" aria-label="1 dari 5">
+          <div class="sicon" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24"><path d="M7 12a3 3 0 0 1 6 0v6H7v-6Zm8-2h2v8h-2V10Zm-8.5-6A2.5 2.5 0 0 1 9 6.5H6.5A2.5 2.5 0 0 1 4 4h2.5Z" fill="#fff"/></svg>
+          </div>
+          <h4>Menganggap Sudah Halal</h4>
+          <p>Logika “sudah tunangan berarti bebas” itu keliru. Tetap jaga batas syar’i hingga akad sah.</p>
+        </div>
+        <div class="slide" role="group" aria-label="2 dari 5">
+          <div class="sicon" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24"><path d="M4 5h16v2H4V5Zm0 6h16v2H4v-2Zm0 6h10v2H4v-2Z" fill="#fff"/></svg>
+          </div>
+          <h4>Komunikasi Berlebihan</h4>
+          <p>Intensitas berlebihan bisa memicu keterikatan emosional yang sulit dikendalikan. Tetapkan frekuensi dan topik yang sehat.</p>
+        </div>
+        <div class="slide" role="group" aria-label="3 dari 5">
+          <div class="sicon" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5Zm0 7L2 4v13l10 5 10-5V4l-10 5Z" fill="#fff"/></svg>
+          </div>
+          <h4>Pamer di Media Sosial</h4>
+          <p>Unggahan mesra sebelum halal memicu fitnah dan ekspektasi publik. Pilih privasi dan kehormatan.</p>
+        </div>
+        <div class="slide" role="group" aria-label="4 dari 5">
+          <div class="sicon" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24"><path d="M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm1 4h-2v5.5l4 2.4 1-1.7-3-1.7V8Z" fill="#fff"/></svg>
+          </div>
+          <h4>Menunda Tanpa Alasan Jelas</h4>
+          <p>Jika sudah sepakat, jangan menunda tahap berikutnya. Penundaan membuka ruang keraguan.</p>
+        </div>
+        <div class="slide" role="group" aria-label="5 dari 5">
+          <div class="sicon" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm-7 9a7 7 0 1 1 14 0H5Z" fill="#fff"/></svg>
+          </div>
+          <h4>Batas Interaksi</h4>
+          <p>Tetapkan aturan bersama: pertemuan didampingi, topik pembicaraan terarah, fokus persiapan akad.</p>
+        </div>
+      </div>
+      <div class="nav" aria-hidden="true">
+        <button class="prev" id="prev" aria-label="Sebelumnya">◀</button>
+        <button class="next" id="next" aria-label="Berikutnya">▶</button>
+      </div>
+      <div class="dots" id="dots" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <!-- Bagian 5: Kesimpulan & Nasihat -->
+  <section id="penutup" class="container">
+    <h2 class="section-title reveal">Langkah Bijak Menuju Pernikahan</h2>
+    <p class="section-lead reveal">Pegang tiga kunci khitbah: jelas, singkat, padat. Jaga batas, percepat yang baik, dan muliakan proses hingga akad.</p>
+    <ul class="tips" id="tips">
+      <li class="tip"><div class="tick">✓</div><div><strong>Fokus tujuan</strong>: sebutkan niat dengan terang dan hormat kepada wali/keluarga.</div></li>
+      <li class="tip"><div class="tick">✓</div><div><strong>Efisien</strong>: sepakati alur waktu dan tahapan; hindari tarik-ulur.</div></li>
+      <li class="tip"><div class="tick">✓</div><div><strong>Jaga batas</strong>: interaksi proporsional, pertemuan terjaga, topik relevan persiapan akad.</div></li>
+      <li class="tip"><div class="tick">✓</div><div><strong>Privasi</strong>: minimalkan publikasi hubungan sebelum halal untuk menghindari fitnah.</div></li>
+      <li class="tip"><div class="tick">✓</div><div><strong>Doa & ikhtiar</strong>: perbanyak doa, minta bimbingan orang tua/ustadz, dan kuatkan komitmen.</div></li>
+    </ul>
+  </section>
+
+  <footer class="container">
+    <p>Konten ini bersifat edukatif. Sesuaikan praktik dengan tuntunan ulama terpercaya dan adat setempat.</p>
+  </footer>
+
+  <script>
+    // Intersection Observer for reveal animations
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          e.target.classList.add('show');
+          if(e.target.id === 'flame'){
+            e.target.classList.add('lit');
+          }
+          if(e.target.classList.contains('tip')){
+            // stagger list items
+            e.target.style.transitionDelay = (Array.from(e.target.parentElement.children).indexOf(e.target) * 100) + 'ms';
+            e.target.classList.add('show');
+          }
+          io.unobserve(e.target);
+        }
+      })
+    }, {threshold:.18});
+
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+    document.querySelectorAll('.tip').forEach(el=>io.observe(el));
+
+    // Card interactions (click + keyboard)
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card=>{
+      const toggle = ()=>{
+        card.classList.toggle('active');
+        const pressed = card.getAttribute('aria-pressed') === 'true';
+        card.setAttribute('aria-pressed', String(!pressed));
+      };
+      card.addEventListener('click', toggle);
+      card.addEventListener('keypress', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); toggle(); }});
+    });
+
+    // Flame – observe wrapper so flame appears when logs scroll into view
+    const flame = document.getElementById('flame');
+    if(flame){ io.observe(flame); }
+
+    // Simple Carousel
+    const slides = document.getElementById('slides');
+    const prev = document.getElementById('prev');
+    const next = document.getElementById('next');
+    const dotsWrap = document.getElementById('dots');
+    let index = 0;
+    const total = slides.children.length;
+
+    const update = ()=>{
+      slides.style.transform = `translateX(${-index*100}%)`;
+      updateDots();
+    };
+
+    const updateDots = ()=>{
+      dotsWrap.innerHTML = '';
+      for(let i=0;i<total;i++){
+        const d = document.createElement('div');
+        d.className = 'dot' + (i===index ? ' active' : '');
+        d.setAttribute('role','button');
+        d.setAttribute('aria-label',`Pergi ke slide ${i+1}`);
+        d.tabIndex = 0;
+        d.addEventListener('click', ()=>{ index = i; update(); });
+        d.addEventListener('keypress', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); index=i; update(); }});
+        dotsWrap.appendChild(d);
+      }
+    };
+
+    prev.addEventListener('click', ()=>{ index = (index-1+total)%total; update(); });
+    next.addEventListener('click', ()=>{ index = (index+1)%total; update(); });
+
+    // Swipe support for touch devices
+    let startX = 0;
+    slides.addEventListener('touchstart', (e)=>{ startX = e.touches[0].clientX; }, {passive:true});
+    slides.addEventListener('touchend', (e)=>{
+      const dx = e.changedTouches[0].clientX - startX;
+      if(Math.abs(dx) > 40){ index = (dx>0) ? (index-1+total)%total : (index+1)%total; update(); }
+    }, {passive:true});
+
+    update();
+  
+    // Smooth anchor scrolling & focus management (fix for "Mulai Belajar" button)
+    document.addEventListener('click', (e)=>{
+      const link = e.target.closest('a[href^="#"]');
+      if(!link) return;
+      const hash = link.getAttribute('href');
+      if(hash.length < 2) return;
+      const id = hash.slice(1);
+      const target = document.getElementById(id);
+      if(target){
+        e.preventDefault();
+        try{
+          target.scrollIntoView({behavior:'smooth', block:'start'});
+        }catch{ // older browsers fallback
+          window.location.hash = hash;
+        }
+        // ensure target is focusable for accessibility & keyboard users
+        if(!target.hasAttribute('tabindex')) target.setAttribute('tabindex','-1');
+        target.focus({preventScroll:true});
+      }
+    });
+  </script>
+</body>
+</html>
