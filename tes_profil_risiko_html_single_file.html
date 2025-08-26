@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="id" class="no-js">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tes Profil Risiko · Personal Finance (Single Page)</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #0a0a0a;
+      --muted: #71717a;
+      --card: #ffffff;
+      --cardAlt: #f8f8f9;
+      --border: #e5e7eb;
+      --accent: #0a0a0a;
+      --accentAlt: #111827;
+      --shadow: 0 2px 10px rgba(0,0,0,.06);
+    }
+    .dark {
+      --bg: #0b0b0d;
+      --fg: #f5f5f5;
+      --muted: #9ca3af;
+      --card: #0b0b0d;
+      --cardAlt: #151518;
+      --border: #1f2937;
+      --accent: #f5f5f5;
+      --accentAlt: #e5e7eb;
+      --shadow: 0 2px 10px rgba(0,0,0,.3);
+    }
+    html, body { height: 100%; }
+    body {
+      margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg); color: var(--fg);
+    }
+    .container { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
+    header.topbar { position: sticky; top: 0; z-index: 20; backdrop-filter: saturate(180%) blur(8px); background: color-mix(in srgb, var(--bg) 80%, transparent); border-bottom: 1px solid var(--border); }
+    .topbar-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; max-width: 960px; margin: 0 auto; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo { width: 36px; height: 36px; border-radius: 16px; background: linear-gradient(135deg, #facc15, #fb7185, #a78bfa); }
+    h1 { font-size: 18px; margin: 0; }
+    .sub { font-size: 12px; color: var(--muted); margin: 0; }
+    .controls { display: flex; align-items: center; gap: 8px; }
+    select, button, .btn { font-size: 12px; line-height: 1; border-radius: 12px; border: 1px solid var(--border); padding: 8px 10px; background: transparent; color: var(--fg); cursor: pointer; }
+    button:hover, .btn:hover { background: var(--cardAlt); }
+    .btn.secondary { border-color: color-mix(in srgb, var(--border) 80%, transparent); }
+
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; box-shadow: var(--shadow); }
+    .card.alt { background: var(--cardAlt); }
+    .section-title { font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-size: 14px; margin: 24px 0 8px; }
+
+    .progress { height: 12px; width: 100%; background: var(--cardAlt); border: 1px solid var(--border); border-radius: 999px; overflow: hidden; }
+    .progress__bar { height: 100%; background: var(--accent); width: 0%; transition: width .2s ease; }
+
+    .qgrid { display: grid; grid-template-columns: repeat(1, minmax(0,1fr)); gap: 8px; }
+    @media (min-width: 640px) { .qgrid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+
+    .opt { display: block; border: 1px solid var(--border); border-radius: 12px; padding: 12px; cursor: pointer; transition: background .2s, border-color .2s; }
+    .opt:hover { background: var(--cardAlt); }
+    .opt.checked { border-color: var(--accent); background: color-mix(in srgb, var(--cardAlt) 80%, transparent); }
+    .opt-row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .opt small { color: var(--muted); }
+
+    .score { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap: wrap; }
+
+    .result-grid { display:grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 700px) { .result-grid { grid-template-columns: 1fr 1fr; } }
+
+    .donut { position: relative; width: 144px; height: 144px; border-radius: 999px; }
+    .donut::after { content:""; position:absolute; inset: 12px; background: var(--bg); border-radius: 999px; box-shadow: inset 0 0 0 1px var(--border); }
+
+    .legend { font-size: 13px; display:flex; flex-direction: column; gap: 6px; }
+    .legend-row { display:flex; align-items:center; gap:8px; }
+    .swatch { width: 12px; height: 12px; border-radius: 3px; display:inline-block; }
+
+    table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+    th, td { padding: 8px; border-bottom: 1px solid var(--border); text-align: left; }
+    th.sticky, td.sticky { position: sticky; left: 0; background: var(--card); }
+    td.rowhdr { background: var(--cardAlt); font-weight: 600; }
+
+    details summary { cursor: pointer; font-weight: 600; }
+
+    footer { text-align:center; color: var(--muted); font-size: 12px; margin-top: 40px; }
+
+    @media print {
+      header.topbar, .actions, details, .controls, #tests { display: none !important; }
+      body { background: white !important; color: black !important; }
+      .card, .card.alt { box-shadow: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Tes Profil Risiko</h1>
+          <p class="sub">Personal Finance · Single Page Tool</p>
+        </div>
+      </div>
+      <div class="controls">
+        <button id="toggleDark" aria-label="Toggle dark mode">🌙</button>
+        <select id="lang">
+          <option value="ID">ID</option>
+          <option value="EN">EN (beta)</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card alt" id="summary">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap: wrap;">
+        <div>
+          <h2 style="margin:0; font-weight:600;">Ringkasan Progres</h2>
+          <p class="sub" id="progressText">0/7 pertanyaan terisi</p>
+        </div>
+        <div style="min-width:200px; width:280px;">
+          <div class="progress" aria-hidden="true"><div class="progress__bar" id="progressBar"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <h3 class="section-title">Time Horizon</h3>
+    <div id="timeQuestions"></div>
+    <section class="card alt" id="timeScoreBox">
+      <div class="score">
+        <div>
+          <div style="font-weight:600;">Skor Horizon Waktu</div>
+          <div style="font-size: 28px; font-weight: 800;" id="timeScore">0</div>
+        </div>
+        <div style="flex:1"></div>
+        <div id="earlyStopBox" style="max-width: 560px; display:none;">
+          <div class="card" style="border-color:#fbbf24; background: color-mix(in srgb, #fbbf24 6%, transparent);">
+            <div style="font-weight:600;">Horizon sangat singkat</div>
+            <p style="margin:.5em 0 0 0; font-size: 13px; line-height:1.4;">
+              Rekomendasi baseline: <b>40% obligasi jangka pendek</b> (durasi ≤ 5 tahun) + <b>60% kas</b>.
+              Anda tetap bisa melanjutkan pengisian untuk eksplorasi, namun fokus utama sebaiknya pelestarian modal.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="riskBlock">
+      <h3 class="section-title">Risk Tolerance</h3>
+      <div id="riskQuestions"></div>
+      <section class="card alt">
+        <div class="score">
+          <div>
+            <div style="font-weight:600;">Skor Risk Tolerance</div>
+            <div style="font-size: 28px; font-weight: 800;" id="riskScore">0</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section id="results" class="result-grid" style="display:none; margin-top: 16px;">
+      <div class="card">
+        <h3 style="margin:0 0 8px 0; font-weight:600;">Hasil</h3>
+        <div class="sub">Time Horizon Score: <b id="timeScoreSmall">0</b></div>
+        <div class="sub" id="riskScoreSmallWrap">Risk Tolerance Score: <b id="riskScoreSmall">0</b></div>
+        <div style="font-size: 30px; font-weight: 900; margin-top:6px;" id="profileName">–</div>
+
+        <div id="allocWrap" style="margin-top:14px; display:flex; align-items:center; gap:16px;">
+          <div class="donut" id="donut" aria-label="Komposisi aset"></div>
+          <div class="legend">
+            <div class="legend-row"><span class="swatch" style="background:#22c55e"></span><span>Saham: <b id="pctStocks">0%</b></span></div>
+            <div class="legend-row"><span class="swatch" style="background:#3b82f6"></span><span>Obligasi: <b id="pctBonds">0%</b></span></div>
+            <div class="legend-row"><span class="swatch" style="background:#f43f5e"></span><span>Kas: <b id="pctCash">0%</b></span></div>
+            <div id="allocNote" class="sub" style="margin-top:6px; line-height:1.4;"></div>
+          </div>
+        </div>
+
+        <p class="sub" style="margin-top:12px; line-height:1.5;">
+          Catatan: Komposisi di atas bersifat baseline edukatif, bukan nasihat investasi individual. Sesuaikan dengan tujuan,
+          kebutuhan likuiditas, profil pajak, dan instrumen yang tersedia. Lakukan rebalancing berkala.
+        </p>
+      </div>
+
+      <div class="card alt">
+        <h4 style="margin:0 0 8px 0; font-weight:600;">Aksi</h4>
+        <div class="actions" style="display:flex; flex-wrap:wrap; gap:8px;">
+          <button class="btn" id="btnPrint">🖨️ Cetak / Simpan PDF</button>
+          <button class="btn" id="btnShare">🔗 Bagikan Tautan</button>
+          <button class="btn" id="btnExport">⬇️ Ekspor JSON</button>
+          <button class="btn secondary" id="btnReset">↺ Reset</button>
+        </div>
+        <div style="margin-top:14px; font-size: 13px;">
+          <div style="font-weight:600; margin-bottom:4px;">Cara membaca hasil</div>
+          <ol style="margin:0 0 0 18px; padding:0; color: var(--muted);">
+            <li>Time Horizon: semakin panjang, semakin besar porsi aset berisiko bisa dipertimbangkan.</li>
+            <li>Risk Tolerance: preferensi & kenyamanan terhadap volatilitas.</li>
+            <li>Profil akhir adalah hasil persimpangan Time Horizon × Risk Tolerance.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top: 24px;">
+      <details class="card">
+        <summary>Lihat kisi (grid) pemetaan profil</summary>
+        <div style="margin-top: 10px; overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th class="sticky">Time / Risk</th>
+                <th>Sangat Rendah</th>
+                <th>Rendah</th>
+                <th>Sedang</th>
+                <th>Tinggi</th>
+                <th>Sangat Tinggi</th>
+              </tr>
+            </thead>
+            <tbody id="gridBody"></tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+
+    <!-- Minimal Test Suite (runs in-page) -->
+    <section id="tests" style="margin-top: 24px;">
+      <details class="card">
+        <summary>🧪 Test Cases (klik untuk menjalankan)</summary>
+        <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn" id="runTests">Run Tests</button>
+          <button class="btn secondary" id="fillScenarioA">Isi Contoh A (Early Stop)</button>
+          <button class="btn secondary" id="fillScenarioB">Isi Contoh B (Balanced)</button>
+          <button class="btn secondary" id="fillScenarioC">Isi Contoh C (Aggressive Growth)</button>
+        </div>
+        <pre id="testOutput" class="card alt" style="margin-top:10px; white-space:pre-wrap; max-height:320px; overflow:auto;">Belum dijalankan.</pre>
+      </details>
+    </section>
+
+    <footer> Dibuat untuk edukasi. © <span id="year"></span> — Tes Profil Risiko (Single Page) </footer>
+  </main>
+
+  <script>
+    // ------- Utilities: encoding state in URL -------
+    function encodeState(obj) {
+      try { return btoa(unescape(encodeURIComponent(JSON.stringify(obj)))); } catch { return ""; }
+    }
+    function decodeState(str) {
+      try { return JSON.parse(decodeURIComponent(escape(atob(str)))); } catch { return null; }
+    }
+
+    // ------- Data -------
+    const QUESTIONS = {
+      q1: { section: "Time Horizon", title: "Saya berencana mulai menarik dana dari investasi dalam…",
+        options: [
+          { label: "Kurang dari 3 tahun", score: 1 },
+          { label: "3–5 tahun", score: 3 },
+          { label: "6–10 tahun", score: 7 },
+          { label: "11 tahun atau lebih", score: 10 },
+        ],
+      },
+      q2: { section: "Time Horizon", title: "Setelah mulai menarik, saya berencana menghabiskan seluruh dana dalam…",
+        options: [
+          { label: "Kurang dari 2 tahun", score: 0 },
+          { label: "2–5 tahun", score: 1 },
+          { label: "6–10 tahun", score: 4 },
+          { label: "11 tahun atau lebih", score: 8 },
+        ],
+      },
+      q3: { section: "Risk Tolerance", title: "Pengetahuan saya terhadap instrumen investasi",
+        options: [
+          { label: "Tidak tahu", score: 1 },
+          { label: "Terbatas", score: 3 },
+          { label: "Cukup baik", score: 7 },
+          { label: "Sangat memahami", score: 10 },
+        ],
+      },
+      q4: { section: "Risk Tolerance", title: "Saat menginvestasikan uang, saya…",
+        options: [
+          { label: "Paling khawatir soal potensi kerugian", score: 0 },
+          { label: "Peduli seimbang rugi & untung", score: 4 },
+          { label: "Paling peduli potensi keuntungan", score: 8 },
+        ],
+      },
+      q5: { section: "Risk Tolerance", title: "Pilih investasi yang saat ini kamu miliki (paling dominan)",
+        options: [
+          { label: "Emas / Deposito", score: 3 },
+          { label: "Obligasi / Reksadana Pendapatan Tetap", score: 6 },
+          { label: "Saham / P2P Lending / Reksadana Saham", score: 8 },
+        ],
+      },
+      q6: { section: "Risk Tolerance", title: "Jika pasar saham turun 25% dalam 3 bulan, saya akan…",
+        options: [
+          { label: "Menjual semua saham", score: 0 },
+          { label: "Menjual sebagian", score: 2 },
+          { label: "Tidak bereaksi", score: 5 },
+          { label: "Membeli saham baru (average down)", score: 8 },
+        ],
+      },
+      q7: { section: "Risk Tolerance", title: "Rentang hasil tahunan yang paling bisa diterima (hipotetis)",
+        options: [
+          { label: "-5% sampai +10%", score: 0 },
+          { label: "-10% sampai +15%", score: 2 },
+          { label: "-15% sampai +25%", score: 5 },
+          { label: "-25% sampai +35%", score: 8 },
+          { label: "-35% sampai +45%", score: 10 },
+        ],
+      },
+    };
+
+    const DEFAULT_ALLOCS = {
+      "Defensive": { cash: 60, bonds: 40, stocks: 0, note: "Horizon sangat pendek, lindungi modal." },
+      "Conservative": { cash: 20, bonds: 60, stocks: 20 },
+      "Moderate": { cash: 10, bonds: 50, stocks: 40 },
+      "Balanced": { cash: 5, bonds: 40, stocks: 55 },
+      "Balanced Growth": { cash: 5, bonds: 30, stocks: 65 },
+      "Growth": { cash: 5, bonds: 20, stocks: 75 },
+      "Aggressive Growth": { cash: 0, bonds: 10, stocks: 90 },
+    };
+    const RISK_BANDS = [
+      { min: 0, max: 10, label: "Sangat Rendah" },
+      { min: 11, max: 18, label: "Rendah" },
+      { min: 19, max: 26, label: "Sedang" },
+      { min: 27, max: 34, label: "Tinggi" },
+      { min: 35, max: 60, label: "Sangat Tinggi" },
+    ];
+    const TIME_BANDS = [
+      { min: 1, max: 2, label: "Sangat Pendek" },
+      { min: 3, max: 5, label: "Pendek" },
+      { min: 6, max: 12, label: "Menengah" },
+      { min: 13, max: 18, label: "Panjang" },
+    ];
+    const PROFILE_GRID = [
+      ["Defensive", "Conservative", "Conservative", "Moderate", "Moderate"],
+      ["Conservative", "Conservative", "Moderate", "Balanced Growth", "Growth"],
+      ["Conservative", "Moderate", "Balanced", "Growth", "Aggressive Growth"],
+      ["Moderate", "Balanced", "Growth", "Aggressive Growth", "Aggressive Growth"],
+    ];
+
+    // ------- State -------
+    const els = {
+      timeQuestions: document.getElementById('timeQuestions'),
+      riskQuestions: document.getElementById('riskQuestions'),
+      riskBlock: document.getElementById('riskBlock'),
+      timeScore: document.getElementById('timeScore'),
+      riskScore: document.getElementById('riskScore'),
+      earlyStopBox: document.getElementById('earlyStopBox'),
+      timeScoreSmall: document.getElementById('timeScoreSmall'),
+      riskScoreSmall: document.getElementById('riskScoreSmall'),
+      riskScoreSmallWrap: document.getElementById('riskScoreSmallWrap'),
+      results: document.getElementById('results'),
+      donut: document.getElementById('donut'),
+      pctStocks: document.getElementById('pctStocks'),
+      pctBonds: document.getElementById('pctBonds'),
+      pctCash: document.getElementById('pctCash'),
+      allocNote: document.getElementById('allocNote'),
+      profileName: document.getElementById('profileName'),
+      progressText: document.getElementById('progressText'),
+      progressBar: document.getElementById('progressBar'),
+      btnPrint: document.getElementById('btnPrint'),
+      btnShare: document.getElementById('btnShare'),
+      btnExport: document.getElementById('btnExport'),
+      btnReset: document.getElementById('btnReset'),
+      gridBody: document.getElementById('gridBody'),
+      year: document.getElementById('year'),
+      toggleDark: document.getElementById('toggleDark'),
+      lang: document.getElementById('lang'),
+      runTests: document.getElementById('runTests'),
+      testOutput: document.getElementById('testOutput'),
+      fillA: document.getElementById('fillScenarioA'),
+      fillB: document.getElementById('fillScenarioB'),
+      fillC: document.getElementById('fillScenarioC'),
+    };
+
+    const totalQuestions = 7;
+    let answers = {};
+
+    // ------- Theme / Lang -------
+    function initTheme() {
+      const preferDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const saved = localStorage.getItem('rp_dark');
+      const activeDark = saved === '1' ? true : saved === '0' ? false : preferDark;
+      document.documentElement.classList.toggle('dark', !!activeDark);
+      els.toggleDark.textContent = activeDark ? '☀️' : '🌙';
+      els.toggleDark.addEventListener('click', () => {
+        const nowDark = !document.documentElement.classList.contains('dark');
+        document.documentElement.classList.toggle('dark', nowDark);
+        els.toggleDark.textContent = nowDark ? '☀️' : '🌙';
+        localStorage.setItem('rp_dark', nowDark ? '1' : '0');
+      });
+    }
+    function initLang() {
+      const saved = localStorage.getItem('rp_lang') || 'ID';
+      els.lang.value = saved;
+      els.lang.addEventListener('change', () => {
+        localStorage.setItem('rp_lang', els.lang.value);
+        // (Beta) – Saat ini tidak mengganti teks; hanya menyimpan preferensi seperti versi React.
+      });
+    }
+
+    // ------- Build Questions -------
+    function buildQuestion(qkey, index) {
+      const q = QUESTIONS[qkey];
+      const wrap = document.createElement('section');
+      wrap.className = 'card';
+      const inner = document.createElement('div');
+      inner.style.display = 'flex'; inner.style.alignItems = 'flex-start'; inner.style.gap = '12px';
+      const qno = document.createElement('div'); qno.textContent = 'Q' + index; qno.style.fontSize='12px'; qno.style.color='var(--muted)'; qno.style.marginTop='2px';
+      const body = document.createElement('div'); body.style.width='100%';
+      const title = document.createElement('div'); title.textContent = q.title; title.style.fontWeight='600'; title.style.marginBottom='12px';
+      const grid = document.createElement('div'); grid.className = 'qgrid';
+
+      q.options.forEach((opt, i) => {
+        const id = qkey + '-' + i;
+        const label = document.createElement('label');
+        label.className = 'opt';
+        label.htmlFor = id;
+        const row = document.createElement('div'); row.className = 'opt-row';
+        const span = document.createElement('div'); span.textContent = opt.label;
+        const small = document.createElement('small'); small.textContent = opt.score + ' pts';
+        row.appendChild(span); row.appendChild(small);
+        label.appendChild(row);
+
+        const input = document.createElement('input');
+        input.type = 'radio'; input.name = qkey; input.id = id; input.value = String(opt.score);
+        input.className = 'sr-only'; input.style.position = 'absolute'; input.style.opacity = '0'; input.style.pointerEvents='none';
+        input.addEventListener('change', () => {
+          answers[qkey] = Number(opt.score);
+          persistState();
+          updateUI();
+        });
+
+        grid.appendChild(input);
+        grid.appendChild(label);
+      });
+
+      body.appendChild(title); body.appendChild(grid);
+      inner.appendChild(qno); inner.appendChild(body);
+      wrap.appendChild(inner);
+      return wrap;
+    }
+
+    function mountQuestions() {
+      els.timeQuestions.innerHTML = '';
+      els.riskQuestions.innerHTML = '';
+      ['q1','q2'].forEach((k, i) => els.timeQuestions.appendChild(buildQuestion(k, i+1)));
+      ['q3','q4','q5','q6','q7'].forEach((k, i) => els.riskQuestions.appendChild(buildQuestion(k, i+3)));
+    }
+
+    function markCheckedRadios() {
+      for (const qkey of Object.keys(QUESTIONS)) {
+        const val = answers[qkey];
+        const inputs = document.querySelectorAll('input[name="'+qkey+'"]');
+        inputs.forEach((inp) => {
+          const score = Number(inp.value);
+          const checked = (val === score);
+          inp.checked = checked;
+          const label = inp.nextElementSibling; // structure: input then label
+          if (label && label.classList) {
+            if (checked) label.classList.add('checked'); else label.classList.remove('checked');
+          }
+        });
+      }
+    }
+
+    // ------- Compute -------
+    function bandIndex(value, bands) {
+      for (let i=0;i<bands.length;i++) { const b=bands[i]; if (value>=b.min && value<=b.max) return i; }
+      return -1;
+    }
+
+    function computeFrom(obj) {
+      const t1 = Number(obj.q1 || 0), t2 = Number(obj.q2 || 0);
+      const timeHorizonScore = t1 + t2;
+      const earlyStop = timeHorizonScore > 0 && timeHorizonScore < 3; // rule from doc
+      let riskToleranceScore = 0;
+      if (!earlyStop) {
+        riskToleranceScore = Number(obj.q3 || 0) + Number(obj.q4 || 0) + Number(obj.q5 || 0) + Number(obj.q6 || 0) + Number(obj.q7 || 0);
+      }
+      let profile = null, alloc = null;
+      if (timeHorizonScore>0) {
+        if (earlyStop) { profile = 'Defensive'; alloc = { cash:60, bonds:40, stocks:0 }; }
+        else {
+          const ti = bandIndex(timeHorizonScore, TIME_BANDS);
+          const ri = bandIndex(riskToleranceScore, RISK_BANDS);
+          if (ti>=0 && ri>=0) {
+            profile = PROFILE_GRID[ti][ri];
+            alloc = DEFAULT_ALLOCS[profile];
+          }
+        }
+      }
+      return { timeHorizonScore, earlyStop, riskToleranceScore, profile, alloc };
+    }
+
+    function compute() { return computeFrom(answers); }
+
+    // ------- UI Updates -------
+    function updateUI() {
+      // progress
+      const answered = Object.keys(QUESTIONS).filter(k => answers[k]!=null).length;
+      els.progressText.textContent = answered + '/' + totalQuestions + ' pertanyaan terisi';
+      els.progressBar.style.width = Math.round((answered/totalQuestions)*100) + '%';
+
+      const { timeHorizonScore, earlyStop, riskToleranceScore, profile, alloc } = compute();
+      els.timeScore.textContent = String(timeHorizonScore || 0);
+      els.earlyStopBox.style.display = earlyStop ? 'block' : 'none';
+
+      // Show/hide Risk section
+      els.riskBlock.style.display = earlyStop ? 'none' : 'block';
+      els.riskScore.textContent = String(riskToleranceScore || 0);
+
+      // Results
+      if (profile) {
+        els.results.style.display = '';
+        els.timeScoreSmall.textContent = String(timeHorizonScore || 0);
+        els.riskScoreSmallWrap.style.display = earlyStop ? 'none' : '';
+        els.riskScoreSmall.textContent = String(riskToleranceScore || 0);
+        els.profileName.textContent = profile;
+
+        const a = alloc.stocks, b = alloc.bonds, c = alloc.cash;
+        const g1 = a * 3.6; const g2 = (a + b) * 3.6;
+        els.donut.style.background = `conic-gradient(#22c55e 0 ${g1}deg, #3b82f6 ${g1}deg ${g2}deg, #f43f5e ${g2}deg 360deg)`;
+        els.pctStocks.textContent = a + '%'; els.pctBonds.textContent = b + '%'; els.pctCash.textContent = c + '%';
+        els.allocNote.textContent = DEFAULT_ALLOCS[profile].note || '';
+      } else {
+        els.results.style.display = 'none';
+      }
+
+      markCheckedRadios();
+    }
+
+    // ------- Actions -------
+    function persistState() {
+      try { localStorage.setItem('risk_profile_answers', JSON.stringify(answers)); } catch {}
+    }
+    function loadState() {
+      // from hash first
+      let obj = null;
+      if (location.hash) obj = decodeState(location.hash.replace(/^#/, ''));
+      if (!obj) {
+        try { obj = JSON.parse(localStorage.getItem('risk_profile_answers')||'{}'); } catch { obj = {}; }
+      }
+      answers = obj || {};
+    }
+
+    function isAboutSrcdoc() {
+      return location.protocol === 'about:' || String(location.href).startsWith('about:');
+    }
+    function safeReplaceState(url) {
+      try {
+        if (isAboutSrcdoc()) return false;
+        history.replaceState(null, '', url);
+        return true;
+      } catch { return false; }
+    }
+
+    function shareLink() {
+      const code = encodeState(answers);
+      if (!code) { alert('Gagal membuat tautan.'); return; }
+      let url;
+      if (isAboutSrcdoc()) {
+        // Dalam sandbox about:srcdoc tidak ada URL stabil; kirim hanya kode hash sebagai fallback
+        url = '#'+code;
+      } else {
+        url = location.origin + location.pathname + '#' + code;
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => alert(isAboutSrcdoc() ? 'Kode jawaban disalin (tambahkan setelah # saat di-host).' : 'Tautan disalin ke clipboard!')).catch(() => { prompt('Salin ini:', url); });
+      } else {
+        prompt('Salin ini:', url);
+      }
+    }
+    function exportJSON() {
+      const { timeHorizonScore, riskToleranceScore, earlyStop, profile, alloc } = compute();
+      const data = { timeHorizonScore, riskToleranceScore, earlyStop, profile, allocations: alloc, answers, timestamp: new Date().toISOString() };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'tes-profil-resiko-' + Date.now() + '.json'; a.click();
+      setTimeout(()=>URL.revokeObjectURL(url), 500);
+    }
+    function resetAll() {
+      answers = {}; persistState();
+      try { localStorage.removeItem('risk_profile_answers'); } catch {}
+      // Hapus hash hanya bila bukan about:srcdoc (menghindari SecurityError)
+      if (!isAboutSrcdoc()) {
+        const ok = safeReplaceState(location.pathname);
+        if (!ok) { /* fallback no-op */ }
+      }
+      updateUI();
+    }
+
+    // ------- Grid Table -------
+    function buildGrid() {
+      const tbody = els.gridBody; tbody.innerHTML = '';
+      for (let r=0;r<TIME_BANDS.length;r++) {
+        const tr = document.createElement('tr');
+        const th = document.createElement('td'); th.textContent = TIME_BANDS[r].label; th.className = 'rowhdr sticky'; tr.appendChild(th);
+        for (let c=0;c<RISK_BANDS.length;c++) {
+          const td = document.createElement('td'); td.textContent = PROFILE_GRID[r][c]; tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+      }
+    }
+
+    // ------- Test Suite -------
+    function runTests() {
+      const cases = [
+        {
+          name: 'A) Early Stop → Defensive',
+          input: { q1:1, q2:1 },
+          expect: { profile: 'Defensive', alloc: { cash:60, bonds:40, stocks:0 } }
+        },
+        {
+          name: 'B) Menengah × Sedang → Balanced',
+          input: { q1:7, q2:4, q3:3, q4:4, q5:6, q6:5, q7:5 }, // time=11 (Menengah), risk=23 (Sedang)
+          expect: { profile: 'Balanced' }
+        },
+        {
+          name: 'C) Panjang × Sangat Tinggi → Aggressive Growth',
+          input: { q1:10, q2:8, q3:10, q4:8, q5:8, q6:8, q7:10 }, // time=18 (Panjang), risk=44 (Sangat Tinggi)
+          expect: { profile: 'Aggressive Growth' }
+        },
+      ];
+      const lines = [];
+      let passed = 0;
+      for (const t of cases) {
+        const out = computeFrom(t.input);
+        const ok = (!!out.profile && out.profile === t.expect.profile && (!t.expect.alloc || JSON.stringify(out.alloc)===JSON.stringify(t.expect.alloc)));
+        lines.push((ok? '✅':'❌') + ' ' + t.name + ' => '+ JSON.stringify({ profile: out.profile, alloc: out.alloc }));
+        if (ok) passed++;
+      }
+      els.testOutput.textContent = lines.join('\n') + `\n\n${passed}/${cases.length} tests passed.`;
+    }
+
+    function fillScenarioA() {
+      answers = { q1:1, q2:1 };
+      persistState(); updateUI();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function fillScenarioB() {
+      answers = { q1:7, q2:4, q3:3, q4:4, q5:6, q6:5, q7:5 };
+      persistState(); updateUI();
+    }
+    function fillScenarioC() {
+      answers = { q1:10, q2:8, q3:10, q4:8, q5:8, q6:8, q7:10 };
+      persistState(); updateUI();
+    }
+
+    // ------- Init -------
+    function init() {
+      document.documentElement.classList.remove('no-js');
+      els.year.textContent = new Date().getFullYear();
+      initTheme(); initLang();
+      buildGrid();
+      mountQuestions();
+      loadState();
+      updateUI();
+
+      // buttons
+      els.btnPrint.addEventListener('click', () => window.print());
+      els.btnShare.addEventListener('click', shareLink);
+      els.btnExport.addEventListener('click', exportJSON);
+      els.btnReset.addEventListener('click', resetAll);
+
+      // tests
+      els.runTests.addEventListener('click', runTests);
+      els.fillA.addEventListener('click', fillScenarioA);
+      els.fillB.addEventListener('click', fillScenarioB);
+      els.fillC.addEventListener('click', fillScenarioC);
+    }
+
+    init();
+  </script>
+</body>
+</html>
