@@ -567,6 +567,113 @@
       margin-bottom: 8px;
     }
 
+    /* Lightbox Styles */
+    .lightbox-overlay {
+      display: none; /* Hidden by default */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.9); /* Dark semi-transparent background */
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .lightbox-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .lightbox-content {
+      position: relative;
+      max-width: 90%;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .lightbox-image {
+      max-width: 100%;
+      max-height: 75vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+
+    .lightbox-controls {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .lightbox-btn {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: white;
+      padding: 10px 24px;
+      border-radius: 30px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .lightbox-btn:hover {
+      background: var(--primary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(2, 132, 199, 0.4);
+    }
+
+    .lightbox-close-top {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: white;
+      font-size: 2.5rem;
+      cursor: pointer;
+      transition: color 0.3s ease;
+      line-height: 1;
+      z-index: 10000;
+    }
+
+    .lightbox-close-top:hover {
+      color: #fca5a5;
+    }
+
+    /* Hover effect for clickable slide */
+    .flyer-slide {
+      cursor: pointer;
+    }
+    
+    .flyer-slider-inner::after {
+       content: '🔍 Klik untuk memperbesar';
+       position: absolute;
+       top: 10px;
+       right: 10px;
+       background: rgba(0,0,0,0.6);
+       color: white;
+       padding: 5px 10px;
+       border-radius: 20px;
+       font-size: 0.8rem;
+       font-weight: bold;
+       backdrop-filter: blur(4px);
+       pointer-events: none; /* Let clicks pass through to the image */
+       opacity: 0.8;
+    }
+
   </style>
 </head>
 <body>
@@ -602,12 +709,12 @@
 
         <div class="flyer-slider-container">
           <div class="flyer-slider-inner">
-            <img src="https://lh3.googleusercontent.com/d/1bSzQhJ0-BE0oshz7KnGg5E8GtdNPkYvb" alt="Flyer 1" class="flyer-slide active">
-            <img src="https://lh3.googleusercontent.com/d/1x38cBPxAbAn6Pp-_7UxVOvcqg1LobCbD" alt="Flyer 2" class="flyer-slide">
-            <img src="https://lh3.googleusercontent.com/d/1Im2mYfw5PLU15SiVDIdiB4NZLtaLR_B_" alt="Flyer 3" class="flyer-slide">
-            <img src="https://lh3.googleusercontent.com/d/1EcYKn52sRhoJNJ-vnNLcFtHPp_-d4Nhr" alt="Flyer 4" class="flyer-slide">
-            <img src="https://lh3.googleusercontent.com/d/1adFNwsXs98fjm-Njbseq1RtjKhwVA9sd" alt="Flyer 5" class="flyer-slide">
-            <img src="https://lh3.googleusercontent.com/d/1-4ZD7-jXFAT331yj7N_nivPorL2_lfOY" alt="Flyer 6" class="flyer-slide">
+            <img src="https://lh3.googleusercontent.com/d/1bSzQhJ0-BE0oshz7KnGg5E8GtdNPkYvb" alt="Flyer 1" class="flyer-slide active" onclick="openLightbox(this.src)">
+            <img src="https://lh3.googleusercontent.com/d/1x38cBPxAbAn6Pp-_7UxVOvcqg1LobCbD" alt="Flyer 2" class="flyer-slide" onclick="openLightbox(this.src)">
+            <img src="https://lh3.googleusercontent.com/d/1Im2mYfw5PLU15SiVDIdiB4NZLtaLR_B_" alt="Flyer 3" class="flyer-slide" onclick="openLightbox(this.src)">
+            <img src="https://lh3.googleusercontent.com/d/1EcYKn52sRhoJNJ-vnNLcFtHPp_-d4Nhr" alt="Flyer 4" class="flyer-slide" onclick="openLightbox(this.src)">
+            <img src="https://lh3.googleusercontent.com/d/1adFNwsXs98fjm-Njbseq1RtjKhwVA9sd" alt="Flyer 5" class="flyer-slide" onclick="openLightbox(this.src)">
+            <img src="https://lh3.googleusercontent.com/d/1-4ZD7-jXFAT331yj7N_nivPorL2_lfOY" alt="Flyer 6" class="flyer-slide" onclick="openLightbox(this.src)">
           </div>
 
           <div class="slider-dots">
@@ -854,6 +961,23 @@
 
   </div>
 
+  <!-- Lightbox Element -->
+  <div class="lightbox-overlay" id="lightbox">
+    <div class="lightbox-close-top" onclick="closeLightbox()">&times;</div>
+    <div class="lightbox-content">
+      <img src="" alt="Zoomed Flyer" class="lightbox-image" id="lightbox-img">
+      <div class="lightbox-controls">
+        <a href="#" class="lightbox-btn" id="lightbox-download" download="Flyer-Desa-Gapuk.jpg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Download Poster
+        </a>
+        <button class="lightbox-btn" onclick="closeLightbox()" style="background: rgba(220, 38, 38, 0.4);">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script>
     let currentSlide = 0;
     const slides = document.querySelectorAll('.flyer-slide');
@@ -891,6 +1015,49 @@
 
     // Initialize slider
     startAutoSlide();
+
+    // --- Lightbox Functionality ---
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxDownload = document.getElementById('lightbox-download');
+
+    function openLightbox(imageSrc) {
+      // Pause slider when reading flyer
+      clearInterval(slideInterval); 
+      
+      lightboxImg.src = imageSrc;
+      
+      // Attempt to fetch the high-res version if available, otherwise use displayed src
+      // Since these are google drive links, downloading them directly via <a> tag with 'download' attribute 
+      // sometimes opens a new tab instead of force downloading depending on the browser.
+      // We will set the href to the image source.
+      lightboxDownload.href = imageSrc;
+      
+      // Update download attribute name based on current slide to keep it organized
+      lightboxDownload.setAttribute('download', `Program-Kerja-Muhidin-Part${currentSlide + 1}.jpg`);
+
+      lightbox.classList.add('active');
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('active');
+      // Resume slider
+      resetTimer();
+    }
+
+    // Close lightbox if user clicks outside the image
+    lightbox.addEventListener('click', function(e) {
+      if (e.target === lightbox) {
+        closeLightbox();
+      }
+    });
+
+    // Close lightbox on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+        closeLightbox();
+      }
+    });
   </script>
 
 </body>
