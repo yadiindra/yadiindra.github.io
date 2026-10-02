@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portofolio - Muhidin, S.Sos.I</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Caveat:wght@700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Glassmorphism Variables */
+      --glass-bg: rgba(255, 255, 255, 0.75); /* Cukup pekat agar teks jelas */
+      --glass-bg-light: rgba(255, 255, 255, 0.45);
+      --glass-border: rgba(255, 255, 255, 0.6);
+      --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+      --glass-blur: blur(12px);
+      
+      /* Colors */
+      --text-main: #0f172a;
+      --text-muted: #334155;
+      --primary-color: #0284c7;
+      --primary-dark: #0369a1;
+      --accent-color: #f59e0b;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    .fixed-bg-blur {
+      position: fixed;
+      top: -5%;
+      left: -5%;
+      width: 110%;
+      height: 110vh;
+      background-image: url('https://lh3.googleusercontent.com/d/1BOKI3SlOt4C_itEbF1pmKYunoq-uMHoP');
+      background-size: cover;
+      background-position: center;
+      filter: blur(25px);
+      -webkit-filter: blur(25px);
+      z-index: -3;
+    }
+
+    .fixed-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background-image: url('https://lh3.googleusercontent.com/d/1BOKI3SlOt4C_itEbF1pmKYunoq-uMHoP');
+      background-size: contain; /* Memastikan seluruh foto masuk ke layar tanpa terpotong */
+      background-position: center bottom; /* Memposisikan subjek di tengah bawah */
+      background-repeat: no-repeat;
+      z-index: -2;
+    }
+
+    /* Overlay to improve text contrast on glass cards */
+    .bg-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.1) 0%, rgba(15, 23, 42, 0.3) 100%);
+      z-index: -1;
+    }
+
+    .container {
+      height: 100vh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+    }
+
+    .section {
+      min-height: 100vh;
+      width: 100%;
+      scroll-snap-align: start;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 6%;
+      position: relative;
+    }
+
+    .grid-2, .full-content, .text-card {
+      position: relative;
+      z-index: 2;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+      align-items: center;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: var(--glass-shadow);
+    }
+
+    /* Slider Container */
+    .flyer-slider-container {
+      width: 100%;
+      max-width: 450px;
+      aspect-ratio: 188.613 / 235.767;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+      background: var(--glass-bg-light);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      padding: 12px;
+    }
+
+    .flyer-slider-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .flyer-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.8s ease-in-out;
+      object-fit: cover;  
+      border-radius: 12px;
+    }
+
+    .flyer-slide.active {
+      opacity: 1;
+    }
+
+    .slider-dots {
+      position: absolute;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 12px;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.4);
+      padding: 8px 16px;
+      border-radius: 20px;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .slider-dot {
+      width: 10px;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .slider-dot.active {
+      background: var(--primary-color);
+      width: 24px;
+      border-radius: 10px;
+    }
+
+    .right-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 25px;
+    }
+
+    .slogan-banner {
+      background: rgba(2, 132, 199, 0.85); /* Blue tinted glass */
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 15px 30px;
+      border-radius: 20px;
+      display: inline-block;
+      transform: rotate(-2deg);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      margin-bottom: 10px;
+    }
+
+    .slogan-banner p {
+      font-family: 'Caveat', cursive, sans-serif;
+      font-size: 2rem;
+      line-height: 1.3;
+      margin: 0;
+      color: #ffffff;
+    }
+
+    .slogan-banner .highlight-blue {
+      color: #ffed4a; /* Yellow contrast for dark blue glass */
+      font-size: 2.4rem;
+      display: block;
+    }
+
+    .photo-frame-wrapper {
+      padding: 12px;
+      border-radius: 50%;
+      background: var(--glass-bg-light);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      display: inline-block;
+    }
+
+    .photo-frame {
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .name-card {
+      width: 100%;
+      max-width: 380px;
+      padding: 20px 30px;
+    }
+
+    .text-card {
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 40px;
+    }
+
+    .full-content {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+      color: var(--primary-dark);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    h2 {
+      font-size: 2.4rem;
+      margin-bottom: 25px;
+      color: var(--text-main);
+      font-weight: 800;
+      position: relative;
+      display: inline-block;
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 60px;
+      height: 4px;
+      background-color: var(--primary-color);
+      border-radius: 2px;
+    }
+
+    .full-content h2 {
+      text-align: center;
+      display: block;
+    }
+    
+    .full-content h2::after {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin: 0;
+    }
+
+    p, li {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    ul, ol {
+      text-align: left;
+      display: inline-block;
+      margin-top: 20px;
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 992px) {
+      .grid-2 {
+        gap: 30px;
+      }
+      .section {
+        padding: 40px 4%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .section {
+        height: auto;  
+        min-height: 100vh;
+        padding: 60px 5%;
+      }
+
+      .grid-2 {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .right-column {
+        order: 1;
+      }
+
+      .flyer-slider-container {
+        order: 2;
+        width: 100%;
+        max-width: 400px;
+      }
+
+      .photo-frame-wrapper {
+        padding: 10px;
+      }
+
+      .photo-frame {
+        width: 200px;
+        height: 200px;
+      }
+
+      .slogan-banner p { font-size: 1.5rem; }
+      .slogan-banner .highlight-blue { font-size: 1.8rem; }
+      
+      .glass-card {
+        padding: 25px;
+      }
+    }
+
+    .info-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+      margin-top: 10px;
+    }
+
+    .info-table tr {
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(5px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+
+    .info-table td {
+      padding: 15px;
+      vertical-align: top;
+    }
+
+    .info-table td:first-child {
+      border-top-left-radius: 12px;
+      border-bottom-left-radius: 12px;
+    }
+
+    .info-table td:last-child {
+      border-top-right-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+
+    .info-table td.label-col {
+      width: 35%;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .info-table td.sep-col {
+      width: 2%;
+      color: var(--text-muted);
+      padding: 15px 0;
+      text-align: center;
+    }
+
+    .info-table td.value-col {
+      width: 63%;
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .year-badge {
+      display: inline-block;
+      background: var(--primary-color);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      box-shadow: 0 2px 5px rgba(2, 132, 199, 0.3);
+    }
+
+    /* Custom Scrollbar for Glassmorphism */
+    .text-card::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .text-card::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      margin: 10px 0;
+    }
+
+    .text-card::-webkit-scrollbar-thumb {
+      background: rgba(2, 132, 199, 0.5);
+      border-radius: 10px;
+    }
+
+    .text-card::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-color);
+    }
+
+    /* Visi Misi Specifics */
+    .visi-card, .misi-container {
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 20px;
+      padding: 35px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .visi-header, .misi-header {
+      display: inline-block;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: white;
+      background-color: var(--primary-color);
+      padding: 8px 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+    }
+
+    .visi-quote {
+      font-size: 1.4rem !important;
+      font-weight: 800 !important;
+      line-height: 1.5;
+      color: var(--text-main) !important;  
+      margin: 0;
+      text-align: center;
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+    }
+    
+    .misi-list {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+    }
+
+    .misi-item {
+      background: rgba(255, 255, 255, 0.6);
+      margin-bottom: 12px;
+      padding: 16px 20px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      display: flex;
+      align-items: center;
+      transition: transform 0.2s ease;
+    }
+    
+    .misi-item:hover {
+      transform: translateX(5px);
+    }
+
+    .misi-item::before {
+      content: '✓';
+      display: inline-block;
+      margin-right: 15px;
+      color: white;
+      font-weight: bold;
+      font-size: 1.1rem;
+      background: var(--primary-color);
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
+      text-align: center;
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.4);
+    }
+
+    .misi-text {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    /* Target Execution styling */
+    .target-execution {
+      display: inline-block;
+      background: var(--primary-color);
+      padding: 8px 16px;
+      border-radius: 12px;
+      color: white;
+      font-weight: 700;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+    }
+    
+    .program-list {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .program-list li {
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      padding: 25px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .program-list li:hover {
+      background: rgba(255, 255, 255, 0.7);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    .program-list strong {
+      display: block;
+      color: var(--primary-dark);
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="fixed-bg-blur"></div>
+  <div class="fixed-bg"></div>
+  <div class="bg-overlay"></div>
+
+  <div class="container">
+
+    <section class="section" id="hal1">
+      <div class="grid-2">
+        
+        <div class="right-column">
+          <div class="slogan-banner">
+            <p>
+              Bersama Membangun<br>
+              Desa Gapuk yang<br>
+              <span class="highlight-blue"><b>LEBIH BAIK</b></span>
+              <b>#KerengBaru</b>
+            </p>
+          </div>
+
+          <div class="photo-frame-wrapper">
+            <img src="https://lh3.googleusercontent.com/d/1BOKI3SlOt4C_itEbF1pmKYunoq-uMHoP" alt="Foto Profil Muhidin" class="photo-frame">
+          </div>
+
+          <div class="name-card glass-card" style="padding: 20px 30px;">
+            <h1>MUHIDIN, S.Sos.I</h1>
+            <h3>Calon Kepala Desa Gapuk 2027-2035</h3>
+          </div>
+        </div>
+
+        <div class="flyer-slider-container">
+          <div class="flyer-slider-inner">
+            <img src="https://lh3.googleusercontent.com/d/1bSzQhJ0-BE0oshz7KnGg5E8GtdNPkYvb" alt="Flyer 1" class="flyer-slide active">
+            <img src="https://lh3.googleusercontent.com/d/1x38cBPxAbAn6Pp-_7UxVOvcqg1LobCbD" alt="Flyer 2" class="flyer-slide">
+            <img src="https://lh3.googleusercontent.com/d/1Im2mYfw5PLU15SiVDIdiB4NZLtaLR_B_" alt="Flyer 3" class="flyer-slide">
+            <img src="https://lh3.googleusercontent.com/d/1EcYKn52sRhoJNJ-vnNLcFtHPp_-d4Nhr" alt="Flyer 4" class="flyer-slide">
+            <img src="https://lh3.googleusercontent.com/d/1adFNwsXs98fjm-Njbseq1RtjKhwVA9sd" alt="Flyer 5" class="flyer-slide">
+            <img src="https://lh3.googleusercontent.com/d/1-4ZD7-jXFAT331yj7N_nivPorL2_lfOY" alt="Flyer 6" class="flyer-slide">
+          </div>
+
+          <div class="slider-dots">
+            <div class="slider-dot active" onclick="manualSlide(0)"></div>
+            <div class="slider-dot" onclick="manualSlide(1)"></div>
+            <div class="slider-dot" onclick="manualSlide(2)"></div>
+            <div class="slider-dot" onclick="manualSlide(3)"></div>
+            <div class="slider-dot" onclick="manualSlide(4)"></div>
+            <div class="slider-dot" onclick="manualSlide(5)"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section" id="hal2">
+      <div class="grid-2">
+        <div class="text-card glass-card">
+          <h2>Kata Pengantar</h2>
+          <p>"Puji syukur kehadirat Allah SWT, shalawat serta salam semoga tercurah kepada Nabi Muhammad SAW. Sehubungan dengan digelarnya Pemilihan Kepala Desa Serentak Kabupaten Lombok Barat tahun 2026 di 77 desa, termasuk Desa Gapuk. Panggilan untuk membangun masa depan dan memenuhi harapan masyarakat menjadi tanggung jawab kita bersama. Atas dorongan, permohonan, dan kepercayaan dari berbagai elemen masyarakat sejak bulan April lalu (April 2026), maka pada tanggal 17 Agustus 2026 saya secara resmi menyatakan kesiapan untuk mencalonkan diri kembali sebagai Bakal Calon Kepala Desa Gapuk periode 2027-2035.</p>
+          <br/>
+          <p>Semoga niat tulus ini mendapat sambutan serta dukungan penuh dari seluruh masyarakat Desa Gapuk secara ikhlas dan bebas dari money politics, demi mewujudkan kepemimpinan yang amanah sesuai mandat UUD 1945. Sebagai bentuk keterbukaan dan transparansi, tulisan ringkas mengenai riwayat biografi ini saya persembahkan agar dapat dikenal lebih dekat oleh seluruh lapisan masyarakat, khususnya generasi muda Desa Gapuk."</p>
+        </div>
+        <div style="text-align: center;">
+          <div class="photo-frame-wrapper">
+             <img src="https://lh3.googleusercontent.com/d/1BOKI3SlOt4C_itEbF1pmKYunoq-uMHoP" alt="Foto Pengantar" class="photo-frame">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="hal3">
+      <div class="grid-2">
+        <div class="text-card glass-card">
+          <h2>Biodata Lengkap</h2>
+          <table class="info-table">
+            <tr>
+              <td class="label-col">Nama Lengkap</td>
+              <td class="sep-col">:</td>
+              <td class="value-col">MUHIDIN, S.Sos.I</td>
+            </tr>
+            <tr>
+              <td class="label-col">Alamat</td>
+              <td class="sep-col">:</td>
+              <td class="value-col">Dusun Batu Mulik, Desa Gapuk</td>
+            </tr>
+            <tr>
+              <td class="label-col">Tempat & Tgl Lahir</td>
+              <td class="sep-col">:</td>
+              <td class="value-col">Batu Mulik, 07-07-1979</td>
+            </tr>
+            <tr>
+              <td class="label-col">Pendidikan</td>
+              <td class="sep-col">:</td>
+              <td class="value-col">S1 Sosial Islam (S.Sos.I) Universitas Muhammadiyah Yogyakarta</td>
+            </tr>
+            <tr>
+              <td class="label-col">Nama Ayah</td>
+              <td class="sep-col">:</td>
+              <td class="value-col">H. Zaenudin (Almarhum)</td>
+            </tr>
+            <tr>
+              <td class="label-col">Nama Ibu</td>
+              <td class="sep-col">:</td>
+              <td class="value-col">Hj. Siti Rakmah</td>
+            </tr>
+          </table>
+        </div>
+        <div style="text-align: center;">
+          <div class="photo-frame-wrapper">
+            <img src="https://lh3.googleusercontent.com/d/1BOKI3SlOt4C_itEbF1pmKYunoq-uMHoP" alt="Foto Biodata" class="photo-frame">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="hal4">
+      <div class="grid-2">
+        <div class="text-card glass-card">
+          <h2>Riwayat Organisasi</h2>
+          <table class="info-table">
+            <tr>
+              <td class="label-col"><span class="year-badge">2003 - Skrg</span></td>
+              <td class="sep-col">:</td>
+              <td class="value-col">Anggota Keluarga Alumni Universitas Muhammadiyah Yogyakarta NTB (Kaumy NTB)</td>
+            </tr>
+            <tr>
+              <td class="label-col"><span class="year-badge">2004</span></td>
+              <td class="sep-col">:</td>
+              <td class="value-col">Anggota Komite Nasional Pemuda Indonesia ( KNPI ) Lombok Barat</td>
+            </tr>
+            <tr>
+              <td class="label-col"><span class="year-badge">2005 - 2011</span></td>
+              <td class="sep-col">:</td>
+              <td class="value-col">Ketua / Anggota BPD Desa Gapuk</td>
+            </tr>
+            <tr>
+              <td class="label-col"><span class="year-badge">2007</span></td>
+              <td class="sep-col">:</td>
+              <td class="value-col">Ketua OMS Desa Gapuk</td>
+            </tr>
+            <tr>
+              <td class="label-col"><span class="year-badge">2007 - 2013</span></td>
+              <td class="sep-col">:</td>
+              <td class="value-col">Ketua TPK Desa Gapuk - Program PNPM Mandiri</td>
+            </tr>
+            <tr>
+              <td class="label-col"><span class="year-badge">2008 - 2012</span></td>
+              <td class="sep-col">:</td>
+              <td class="value-col">Penasehat PEKA Lombok Barat</td>
+            </tr>
+            <tr>
+              <td class="label-col"><span class="year-badge">2014 - 2019</span></td>
+              <td class="sep-col">:</td>
+              <td class="value-col">Ketua Pengkaderan Pemuda Golkar Lombok Barat</td>
+            </tr>
+            <tr>
+              <td class="label-col"><span class="year-badge">2024 - 2029</span></td>
+              <td class="sep-col">:</td>
+              <td class="value-col">Anggota KPR RI - Divisi Siber Pungli NTB</td>
+            </tr>
+            <tr>
+              <td class="label-col"><span class="year-badge">2025 - 2030</span></td>
+              <td class="sep-col">:</td>
+              <td class="value-col">Ketua 1 Alumni Ponpes Darul Hikmah Mataram</td>
+            </tr>
+            <tr>
+              <td class="label-col"><span class="year-badge">2026 - 2031</span></td>
+              <td class="sep-col">:</td>
+              <td class="value-col">Ketua Koordinator APLI Kec. Gerung</td>
+            </tr>
+          </table>
+        </div>
+        <div style="text-align: center;">
+          <div class="photo-frame-wrapper">
+             <img src="https://lh3.googleusercontent.com/d/1G3VPbsWnNsqihulTYr0BgK58eZuIgnq0" alt="Foto Organisasi" class="photo-frame">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="hal5">
+      <div class="full-content text-card glass-card" style="max-width: 850px;">
+        <h2>Visi &amp; Misi</h2>
+
+        <div class="visi-card">
+          <div style="text-align: center;">
+            <span class="visi-header">VISI</span>
+          </div>
+          <p class="visi-quote">
+            "KERAGAMAN DALAM KEBERSAMAAN UNTUK MENCAPAI PERUBAHAN"
+          </p>
+        </div>
+
+        <div class="misi-container">
+          <div style="text-align: center;">
+            <div class="misi-header">MISI UTAMA</div>
+          </div>
+          <p class="visi-quote" style="font-size: 1.2rem !important; margin-bottom: 25px;">
+            "MELAYANI MASYARAKAT DESA GAPUK TANPA PILIH KASIH"
+          </p>
+          <ul class="misi-list">
+            <li class="misi-item">
+              <div class="misi-text">Terbentuknya Identitas dan Arah Pembangunan Desa ("Icon Desa")</div>
+            </li>
+            <li class="misi-item">
+              <div class="misi-text">Peningkatan Popularitas dan Daya Tarik Desa</div>
+            </li>
+            <li class="misi-item">
+              <div class="misi-text">Kemandirian Finansial dan Peningkatan Pendapatan Asli Desa (PAD)</div>
+            </li>
+            <li class="misi-item">
+              <div class="misi-text">Pemberdayaan SDM dan Pengurangan Pengangguran</div>
+            </li>
+            <li class="misi-item">
+              <div class="misi-text">Pusat Pertumbuhan Ekonomi Baru (Pasar Desa)</div>
+            </li>
+            <li class="misi-item">
+              <div class="misi-text">Kemudahan Akses Permodalan Usaha (Bank Mini Desa Gapuk) dan Terjaminnya Ketahanan Pangan Warga</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="hal6">
+      <div class="full-content text-card glass-card">
+        <h2>Program Kerja Jangka Pendek</h2>
+        <div class="target-execution">Target pelaksanaan: 1 Tahun Pertama</div>
+        <ul class="program-list">
+          <li><strong>Penetapan "Icon Desa" Gapuk</strong> Menentukan dan menyepakati satu identitas unggulan desa bersama warga (Misal Bid. Pendidikan & Keagamaan, Seni & Olahraga, Bisnis/Kewirausahaan, atau Wisata Alam/Agrowisata) agar arah pembangunan menjadi jelas dan fokus.</li>
+          <li><strong>Transformasi Menuju Desa Mandiri</strong> Mengoptimalkan Sumber Daya Alam (SDA) seperti gunung, kebun, kolam, dan sawah, serta memanfaatkan potensi Sarjana/pemuda lokal (SDM) untuk menopang kebutuhan desa tanpa bergantung pada anggaran pusat.</li>
+          <li><strong>Peningkatan Popularitas dan Brand Desa</strong> Promosi dan pemetaan potensi agar Desa Gapuk lebih dikenal publik serta menarik perhatian Pemerintah Daerah dan Pusat.</li>
+          <li><strong>Peningkatan Pendapatan Asli Desa (PAD)</strong> Menggali sumber-sumber penerimaan baru yang bersumber dari pengelolaan potensi lokal berbasis Icon Desa yang telah disepakati.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="hal7">
+      <div class="full-content text-card glass-card">
+        <h2>Program Kerja Jangka Menengah</h2>
+        <div class="target-execution">Target pelaksanaan: 2 - 4 Tahun</div>
+        <ul class="program-list">
+          <li><strong>Penciptaan Peluang Usaha & Pertumbuhan Ekonomi</strong> Memanfaatkan Icon Desa yang sudah terbentuk untuk melahirkan sumber-sumber usaha baru yang mendongkrak perekonomian masyarakat secara inklusif.</li>
+          <li><strong>Pengembangan Infrastruktur Penunjang Perekonomian</strong> Membangun dan membenahi infrastruktur fisik desa (seperti jalan usaha tani, akses menuju pasar/pusat usaha, dan sarana penunjang lainnya) guna memperlancar mobilitas barang, jasa, serta aktivitas ekonomi warga.</li>
+          <li><strong>Pemberdayaan SDM & Pelatihan Keterampilan</strong> Mengadakan berbagai pelatihan bagi para pelaku usaha lokal maupun pengangguran agar mampu mengembangkan potensi usaha, baik secara individu maupun kelompok.</li>
+          <li><strong>Pembangunan Pasar Desa</strong> Membangun Pasar Desa sebagai pusat kegiatan ekonomi yang menetap untuk mempermudah warga memasarkan hasil bumi/usaha sekaligus memenuhi kebutuhan harian masyarakat.</li>
+          <li><strong>Pemanfaatan Peluang Pasar & Lokasi Strategis</strong> Mengoptimalkan potensi pasar dari keberadaan Instansi/Lembaga sekitar, seperti kantor BRIMOB dan rencana pembangunan Kampus Kedokteran UIN Mataram di wilayah Desa Gapuk.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="hal8">
+      <div class="full-content text-card glass-card">
+        <h2>Program Kerja Jangka Panjang</h2>
+        <div class="target-execution">Target pelaksanaan: 4 - 8 Tahun / Berkelanjutan</div>
+        <ul class="program-list">
+          <li><strong>Pendirian "Bank Mini Desa Gapuk"</strong> Menghadirkan pusat keuangan mandiri tingkat desa untuk mempermudah masyarakat mengakses modal usaha kecil secara inklusif tanpa jaminan (cukup menggunakan KTP).</li>
+          <li><strong>Mewujudkan Kemakmuran Desa Tingkat Nasional</strong> Menjadikan Desa Gapuk sebagai desa percontohan nasional yang mampu berkreasi dan mandiri dalam menyejahterakan masyarakatnya.</li>
+          <li><strong>Pembangunan Lumbung Pangan Desa</strong> Menjamin ketahanan pangan warga untuk memastikan tidak ada masyarakat terpinggirkan (masyarakat lemah) yang mengalami kelaparan.</li>
+          <li><strong>Pengadaan Sumber Air Bersih Layak Minum</strong> Mengantisipasi kelangkaan mata air akibat perkembangan zaman dengan membuat dan mengelola sumber mata air khusus yang layak konsumsi bagi seluruh warga.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="hal9">
+      <div class="grid-2">
+        <div class="text-card glass-card" style="text-align: center;">
+          <h2>Slogan Utama</h2>
+          <div class="visi-card" style="margin-top: 20px;">
+            <p style="font-size: 1.6rem; font-style: italic; color: var(--primary-dark); font-weight: 800; line-height: 1.4; text-shadow: none;">
+              "Bersama Membangun Desa Gapuk yang Lebih Baik."
+            </p>
+          </div>
+          <p style="margin-top: 30px; font-weight: 600;">Terima kasih telah membaca portofolio ini.</p>
+        </div>
+        <div style="text-align: center;">
+          <div class="photo-frame-wrapper">
+             <img src="https://lh3.googleusercontent.com/d/1BOKI3SlOt4C_itEbF1pmKYunoq-uMHoP" alt="Foto Slogan" class="photo-frame">
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.flyer-slide');
+    const dots = document.querySelectorAll('.slider-dot');
+    let slideInterval;
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.remove('active');
+        dots[i].classList.remove('active');
+      });
+      slides[index].classList.add('active');
+      dots[index].classList.add('active');
+      currentSlide = index;
+    }
+
+    function nextSlide() {
+      let next = (currentSlide + 1) % slides.length;
+      showSlide(next);
+    }
+
+    function startAutoSlide() {
+      slideInterval = setInterval(nextSlide, 5000);
+    }
+
+    function resetTimer() {
+      clearInterval(slideInterval);
+      startAutoSlide();
+    }
+
+    function manualSlide(index) {
+      showSlide(index);
+      resetTimer();
+    }
+
+    // Initialize slider
+    startAutoSlide();
+  </script>
+
+</body>
+</html>
