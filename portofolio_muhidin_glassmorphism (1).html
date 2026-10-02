@@ -653,6 +653,49 @@
       color: #fca5a5;
     }
 
+    /* Lightbox Navigation */
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: white;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      border-radius: 50%;
+      z-index: 10001;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox-nav:hover {
+      background: var(--primary-color);
+      box-shadow: 0 5px 15px rgba(2, 132, 199, 0.4);
+    }
+
+    .lightbox-prev {
+      left: 30px;
+    }
+
+    .lightbox-next {
+      right: 30px;
+    }
+
+    @media (max-width: 768px) {
+      .lightbox-nav {
+        width: 40px;
+        height: 40px;
+      }
+      .lightbox-prev { left: 10px; }
+      .lightbox-next { right: 10px; }
+      .lightbox-close-top { right: 15px; top: 15px; }
+    }
+
     /* Hover effect for clickable slide */
     .flyer-slide {
       cursor: pointer;
@@ -709,12 +752,12 @@
 
         <div class="flyer-slider-container">
           <div class="flyer-slider-inner">
-            <img src="https://lh3.googleusercontent.com/d/1bSzQhJ0-BE0oshz7KnGg5E8GtdNPkYvb" alt="Flyer 1" class="flyer-slide active" onclick="openLightbox(this.src)">
-            <img src="https://lh3.googleusercontent.com/d/1x38cBPxAbAn6Pp-_7UxVOvcqg1LobCbD" alt="Flyer 2" class="flyer-slide" onclick="openLightbox(this.src)">
-            <img src="https://lh3.googleusercontent.com/d/1Im2mYfw5PLU15SiVDIdiB4NZLtaLR_B_" alt="Flyer 3" class="flyer-slide" onclick="openLightbox(this.src)">
-            <img src="https://lh3.googleusercontent.com/d/1EcYKn52sRhoJNJ-vnNLcFtHPp_-d4Nhr" alt="Flyer 4" class="flyer-slide" onclick="openLightbox(this.src)">
-            <img src="https://lh3.googleusercontent.com/d/1adFNwsXs98fjm-Njbseq1RtjKhwVA9sd" alt="Flyer 5" class="flyer-slide" onclick="openLightbox(this.src)">
-            <img src="https://lh3.googleusercontent.com/d/1-4ZD7-jXFAT331yj7N_nivPorL2_lfOY" alt="Flyer 6" class="flyer-slide" onclick="openLightbox(this.src)">
+            <img src="https://lh3.googleusercontent.com/d/1bSzQhJ0-BE0oshz7KnGg5E8GtdNPkYvb" alt="Flyer 1" class="flyer-slide active" onclick="openLightbox(0)">
+            <img src="https://lh3.googleusercontent.com/d/1x38cBPxAbAn6Pp-_7UxVOvcqg1LobCbD" alt="Flyer 2" class="flyer-slide" onclick="openLightbox(1)">
+            <img src="https://lh3.googleusercontent.com/d/1Im2mYfw5PLU15SiVDIdiB4NZLtaLR_B_" alt="Flyer 3" class="flyer-slide" onclick="openLightbox(2)">
+            <img src="https://lh3.googleusercontent.com/d/1EcYKn52sRhoJNJ-vnNLcFtHPp_-d4Nhr" alt="Flyer 4" class="flyer-slide" onclick="openLightbox(3)">
+            <img src="https://lh3.googleusercontent.com/d/1adFNwsXs98fjm-Njbseq1RtjKhwVA9sd" alt="Flyer 5" class="flyer-slide" onclick="openLightbox(4)">
+            <img src="https://lh3.googleusercontent.com/d/1-4ZD7-jXFAT331yj7N_nivPorL2_lfOY" alt="Flyer 6" class="flyer-slide" onclick="openLightbox(5)">
           </div>
 
           <div class="slider-dots">
@@ -964,6 +1007,15 @@
   <!-- Lightbox Element -->
   <div class="lightbox-overlay" id="lightbox">
     <div class="lightbox-close-top" onclick="closeLightbox()">&times;</div>
+    
+    <!-- Navigation Buttons -->
+    <button class="lightbox-nav lightbox-prev" onclick="changeLightboxSlide(-1)" aria-label="Previous">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <button class="lightbox-nav lightbox-next" onclick="changeLightboxSlide(1)" aria-label="Next">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+
     <div class="lightbox-content">
       <img src="" alt="Zoomed Flyer" class="lightbox-image" id="lightbox-img">
       <div class="lightbox-controls">
@@ -1020,23 +1072,39 @@
     const lightbox = document.getElementById('lightbox');
     const lightboxImg = document.getElementById('lightbox-img');
     const lightboxDownload = document.getElementById('lightbox-download');
+    let currentLightboxIndex = 0;
 
-    function openLightbox(imageSrc) {
+    function openLightbox(index) {
       // Pause slider when reading flyer
       clearInterval(slideInterval); 
       
-      lightboxImg.src = imageSrc;
-      
-      // Attempt to fetch the high-res version if available, otherwise use displayed src
-      // Since these are google drive links, downloading them directly via <a> tag with 'download' attribute 
-      // sometimes opens a new tab instead of force downloading depending on the browser.
-      // We will set the href to the image source.
-      lightboxDownload.href = imageSrc;
-      
-      // Update download attribute name based on current slide to keep it organized
-      lightboxDownload.setAttribute('download', `Program-Kerja-Muhidin-Part${currentSlide + 1}.jpg`);
+      currentLightboxIndex = index;
+      updateLightboxContent();
 
       lightbox.classList.add('active');
+    }
+
+    function updateLightboxContent() {
+      // Ambil source gambar berdasarkan index array
+      const imageSrc = slides[currentLightboxIndex].src;
+      lightboxImg.src = imageSrc;
+      
+      // Update link download
+      lightboxDownload.href = imageSrc;
+      lightboxDownload.setAttribute('download', `Program-Kerja-Muhidin-Part${currentLightboxIndex + 1}.jpg`);
+    }
+
+    function changeLightboxSlide(direction) {
+      currentLightboxIndex += direction;
+      
+      // Bikin fungsi berputar (loop), dari terakhir ke awal, atau awal ke akhir
+      if (currentLightboxIndex < 0) {
+        currentLightboxIndex = slides.length - 1;
+      } else if (currentLightboxIndex >= slides.length) {
+        currentLightboxIndex = 0;
+      }
+      
+      updateLightboxContent();
     }
 
     function closeLightbox() {
@@ -1052,12 +1120,39 @@
       }
     });
 
-    // Close lightbox on Escape key
+    // Keyboard Navigation (Esc to close, Arrows to slide)
     document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && lightbox.classList.contains('active')) {
-        closeLightbox();
+      if (lightbox.classList.contains('active')) {
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') changeLightboxSlide(-1);
+        if (e.key === 'ArrowRight') changeLightboxSlide(1);
       }
     });
+
+    // Touch Swipe Navigation for Mobile Devices
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    lightbox.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, {passive: true});
+
+    lightbox.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleLightboxSwipe();
+    }, {passive: true});
+
+    function handleLightboxSwipe() {
+      const swipeThreshold = 40; // Minimal jarak geser agar dianggap swipe (px)
+      if (touchEndX < touchStartX - swipeThreshold) {
+        // Geser layar ke kiri (Lihat gambar selanjutnya)
+        changeLightboxSlide(1);
+      }
+      if (touchEndX > touchStartX + swipeThreshold) {
+        // Geser layar ke kanan (Lihat gambar sebelumnya)
+        changeLightboxSlide(-1);
+      }
+    }
   </script>
 
 </body>
